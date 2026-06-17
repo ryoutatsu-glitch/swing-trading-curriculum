@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Module 02 — SEPA / Trend Template / VCP | Swing Trading Curriculum</title>
+<style>
+  :root {
+    --bg: #0a0c10; --surface: #12151e; --surface2: #1a1f2e;
+    --border: #1e293b; --text: #e2e8f0; --text2: #94a3b8; --text3: #64748b;
+    --s1: #64748b; --s2: #22c55e; --s3: #eab308; --s4: #ef4444;
+    --accent: #818cf8; --accent2: #6366f1; --cyan: #06b6d4;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { background: var(--bg); color: var(--text); font-family: "Hiragino Kaku Gothic ProN","Noto Sans JP","Yu Gothic",sans-serif; line-height: 1.8; font-size: 15px; -webkit-font-smoothing: antialiased; }
+  .container { max-width: 760px; margin: 0 auto; padding: 0 24px; }
+  .hero { padding: 80px 0 60px; border-bottom: 1px solid var(--border); background: linear-gradient(180deg, #0f1219 0%, var(--bg) 100%); }
+  .hero-module { font-size: 11px; letter-spacing: 4px; text-transform: uppercase; color: var(--accent); margin-bottom: 16px; font-weight: 600; }
+  .hero h1 { font-size: clamp(28px, 5vw, 42px); font-weight: 800; line-height: 1.3; letter-spacing: -0.5px; margin-bottom: 12px; }
+  .hero h1 em { font-style: normal; color: var(--cyan); }
+  .hero-sub { font-size: 16px; color: var(--text2); max-width: 560px; }
+  .hero-meta { margin-top: 32px; display: flex; gap: 24px; flex-wrap: wrap; font-size: 12px; color: var(--text3); letter-spacing: 0.5px; }
+  section { padding: 56px 0; border-bottom: 1px solid var(--border); }
+  section:last-of-type { border-bottom: none; }
+  .section-label { font-size: 11px; letter-spacing: 3px; text-transform: uppercase; color: var(--accent); margin-bottom: 20px; font-weight: 600; }
+  h2 { font-size: 22px; font-weight: 700; margin-bottom: 16px; letter-spacing: -0.3px; line-height: 1.4; }
+  p { color: var(--text2); margin-bottom: 16px; }
+  p strong { color: var(--text); font-weight: 600; }
+  blockquote { border-left: 3px solid var(--accent); padding: 16px 20px; margin: 24px 0; background: var(--surface); border-radius: 0 8px 8px 0; }
+  blockquote p { font-size: 14px; color: var(--text); margin: 0; font-style: italic; }
+  blockquote cite { display: block; font-size: 12px; color: var(--text3); margin-top: 8px; font-style: normal; }
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; margin-bottom: 20px; overflow: hidden; transition: border-color 0.3s; }
+  .card:hover { border-color: var(--text3); }
+  .card-header { padding: 20px 24px; cursor: pointer; display: flex; align-items: center; gap: 16px; user-select: none; }
+  .card-header:hover { background: var(--surface2); }
+  .card-num { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 800; color: var(--bg); flex-shrink: 0; }
+  .card-header-text h3 { font-size: 16px; font-weight: 700; margin-bottom: 2px; }
+  .card-header-text span { font-size: 13px; color: var(--text2); }
+  .card-toggle { margin-left: auto; font-size: 20px; color: var(--text3); transition: transform 0.3s; flex-shrink: 0; }
+  .card.open .card-toggle { transform: rotate(45deg); }
+  .card-body { max-height: 0; overflow: hidden; transition: max-height 0.4s ease; }
+  .card.open .card-body { max-height: 3000px; }
+  .card-content { padding: 0 24px 24px; }
+  .card-content h4 { font-size: 13px; font-weight: 700; color: var(--text); letter-spacing: 1px; text-transform: uppercase; margin: 20px 0 10px; padding-top: 16px; border-top: 1px solid var(--border); }
+  .card-content h4:first-child { border-top: none; padding-top: 0; margin-top: 0; }
+  .card-content ul { list-style: none; padding: 0; }
+  .card-content li { padding: 6px 0 6px 20px; color: var(--text2); font-size: 14px; position: relative; }
+  .card-content li::before { content: ""; position: absolute; left: 0; top: 14px; width: 6px; height: 6px; border-radius: 50%; background: var(--cyan); }
+  .tt-grid { display: grid; grid-template-columns: 1fr; gap: 12px; margin: 24px 0; }
+  .tt-item { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 16px 20px; display: flex; gap: 14px; align-items: flex-start; }
+  .tt-num { width: 28px; height: 28px; border-radius: 8px; background: var(--cyan); color: var(--bg); display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 800; flex-shrink: 0; margin-top: 2px; }
+  .tt-text { font-size: 14px; color: var(--text2); }
+  .tt-text strong { color: var(--text); }
+  .tt-pass { display: inline-block; font-size: 10px; font-weight: 700; padding: 2px 6px; border-radius: 4px; margin-left: 8px; }
+  .sepa-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; margin: 24px 0; }
+  .sepa-item { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 20px 16px; text-align: center; }
+  .sepa-letter { font-size: 32px; font-weight: 800; margin-bottom: 4px; }
+  .sepa-en { font-size: 11px; color: var(--text3); letter-spacing: 0.5px; margin-bottom: 6px; }
+  .sepa-ja { font-size: 13px; color: var(--text2); }
+  .diagram-wrap { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 32px 24px; margin: 32px 0; overflow-x: auto; }
+  .diagram-caption { text-align: center; font-size: 12px; color: var(--text3); margin-top: 16px; }
+  .warn-box { background: var(--surface2); border-left: 3px solid var(--s3); border-radius: 0 8px 8px 0; padding: 16px 20px; margin: 20px 0; }
+  .warn-box p { margin: 0; font-size: 14px; }
+  .rule-list { margin: 24px 0; }
+  .rule { display: flex; gap: 16px; padding: 16px 0; border-bottom: 1px solid var(--border); align-items: flex-start; }
+  .rule:last-child { border-bottom: none; }
+  .rule-num { width: 32px; height: 32px; border-radius: 8px; background: var(--accent); color: var(--bg); display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 800; flex-shrink: 0; }
+  .rule-text { font-size: 14px; color: var(--text2); }
+  .rule-text strong { color: var(--text); }
+  .checklist { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 24px; margin: 24px 0; }
+  .checklist h3 { font-size: 14px; font-weight: 700; margin-bottom: 16px; letter-spacing: 1px; }
+  .check-item { display: flex; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--border); font-size: 14px; color: var(--text2); cursor: pointer; }
+  .check-item:last-child { border-bottom: none; }
+  .check-item input[type="checkbox"] { width: 18px; height: 18px; accent-color: var(--s2); cursor: pointer; }
+  .check-item:has(input:checked) { color: var(--text3); text-decoration: line-through; }
+  .bridge { background: linear-gradient(135deg, var(--surface) 0%, var(--surface2) 100%); border: 1px solid var(--border); border-radius: 12px; padding: 32px; margin: 24px 0; }
+  .bridge h3 { font-size: 16px; margin-bottom: 12px; }
+  .bridge p { font-size: 14px; }
+  footer { padding: 40px 0; text-align: center; font-size: 12px; color: var(--text3); border-top: 1px solid var(--border); }
+  footer a { color: var(--accent); text-decoration: none; }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="container">
+    <div class="hero-module">Module 02 / 08</div>
+    <h1>SEPA / Trend Template / VCP<br><em>精密なエントリーの技術</em></h1>
+    <p class="hero-sub">Mark Minerviniが米国投資選手権を制した手法。<br>Stage 2の中で「いつ、どこで買うか」を数値で定義する。</p>
+    <div class="hero-meta">
+      <span>📖 Mark Minervini</span>
+      <span>📕 Trade Like a Stock Market Wizard (2013)</span>
+      <span>📕 Think & Trade Like a Champion (2017)</span>
+      <span>⏱ 読了20分</span>
+    </div>
+  </div>
+</header>
+
+<!-- SEPA Overview -->
+<section>
+  <div class="container">
+    <div class="section-label">Framework</div>
+    <h2>SEPAとは何か</h2>
+    <p>SEPA（Specific Entry Point Analysis）はMinerviniの手法全体を統合するフレームワークです。4つの要素がすべて揃ったときだけトレードする、という規律が核にあります。</p>
+    <div class="sepa-grid">
+      <div class="sepa-item"><div class="sepa-letter" style="color:var(--cyan)">S</div><div class="sepa-en">Specific Entry Point</div><div class="sepa-ja">具体的なエントリーポイント<br>（VCPブレイクアウト）</div></div>
+      <div class="sepa-item"><div class="sepa-letter" style="color:var(--s2)">E</div><div class="sepa-en">Earnings</div><div class="sepa-ja">業績<br>（EPS成長・売上成長）</div></div>
+      <div class="sepa-item"><div class="sepa-letter" style="color:var(--accent)">P</div><div class="sepa-en">Price Action</div><div class="sepa-ja">値動き<br>（トレンドテンプレート）</div></div>
+      <div class="sepa-item"><div class="sepa-letter" style="color:var(--s3)">A</div><div class="sepa-en">Announcement</div><div class="sepa-ja">カタリスト<br>（材料・ニュース）</div></div>
+    </div>
+    <p>Module 1で学んだStage Analysisは「Stage 2の株だけ買え」という大枠のルールでした。SEPAはその中で<strong>「Stage 2のどの瞬間に、どの条件が揃ったときに買うか」</strong>を精密に定義します。</p>
+    <blockquote>
+      <p>トレンドテンプレートを満たすことは買いシグナルではない。テンプレートは候補を絞るフィルターであり、実際のエントリーにはVCPのようなセットアップパターンが必要だ。</p>
+      <cite>— Mark Minervini</cite>
+    </blockquote>
+  </div>
+</section>
+
+<!-- Trend Template -->
+<section>
+  <div class="container">
+    <div class="section-label">The Filter</div>
+    <h2>8項目トレンドテンプレート</h2>
+    <p>トレンドテンプレートはStage 2にある銘柄を<strong>機械的に判定する8つの条件</strong>です。1つでも満たさない銘柄は候補から即除外。例外なし。</p>
+    <p>Module 1のWeinsteinが「30週移動平均線の方向を見ろ」と言ったものを、Minerviniは具体的な数値条件に落とし込みました。</p>
+
+    <div class="tt-grid">
+      <div class="tt-item"><div class="tt-num">1</div><div class="tt-text"><strong>株価 ＞ 150日SMA かつ 株価 ＞ 200日SMA</strong><br>長期トレンドの上にいること。これがStage 2の最低条件。</div></div>
+      <div class="tt-item"><div class="tt-num">2</div><div class="tt-text"><strong>150日SMA ＞ 200日SMA</strong><br>中期トレンドが長期トレンドを上回っている。移動平均線が正しい順序でスタックしている。</div></div>
+      <div class="tt-item"><div class="tt-num">3</div><div class="tt-text"><strong>200日SMAが少なくとも1ヶ月上向き</strong>（理想は4〜5ヶ月以上）<br>長期トレンドが確認済み。30日前より今のほうが高い位置にあること。</div></div>
+      <div class="tt-item"><div class="tt-num">4</div><div class="tt-text"><strong>50日SMA ＞ 150日SMA かつ 50日SMA ＞ 200日SMA</strong><br>短期トレンドも中長期の上。3本の移動平均線が 50日 ＞ 150日 ＞ 200日 の順で並ぶ。</div></div>
+      <div class="tt-item"><div class="tt-num">5</div><div class="tt-text"><strong>株価 ＞ 50日SMA</strong><br>直近のモメンタムが生きている。50日線を割っている株は短期的に弱い。</div></div>
+      <div class="tt-item"><div class="tt-num">6</div><div class="tt-text"><strong>株価が52週安値から25〜30%以上高い</strong><br>底値圏の株を排除。十分に上昇が始まっていることの確認。</div></div>
+      <div class="tt-item"><div class="tt-num">7</div><div class="tt-text"><strong>株価が52週高値の25%以内</strong>（高値に近いほど良い）<br>新高値を狙える位置にいること。52週高値から遠すぎる株はモメンタムを失っている。</div></div>
+      <div class="tt-item"><div class="tt-num">8</div><div class="tt-text"><strong>相対強度（RS）ランキングが70以上</strong>（理想は80〜90台）<br>市場全体と比較して強い銘柄だけを対象にする。弱い銘柄は無視。</div></div>
+    </div>
+
+    <div class="warn-box">
+      <p><strong>⚠ 重要な区別：</strong>8項目すべてを満たしても、それは「買いシグナル」ではない。あくまで「エントリー候補として検討する資格がある」という意味。実際に買うには、次に学ぶVCPセットアップが必要。</p>
+    </div>
+
+    <p><strong>日本株への適用メモ：</strong>米国のRS（Relative Strength）ランキングはInvestor's Business Daily（IBD）が提供しているもので、日本株には直接の対応指標がありません。代替として、TOPIX（またはセクター指数）に対する相対パフォーマンスを自分で計算する、もしくは条件7（52週高値の近さ）で代用するアプローチが現実的です。</p>
+  </div>
+</section>
+
+<!-- VCP -->
+<section>
+  <div class="container">
+    <div class="section-label">The Setup</div>
+    <h2>VCP——Volatility Contraction Pattern</h2>
+    <p>VCP（ボラティリティ収縮パターン）は、Minerviniの手法において<strong>実際のエントリートリガー</strong>となるチャートパターンです。トレンドテンプレートでフィルタリングした銘柄の中から、VCPが形成されている銘柄を見つけ、ブレイクアウトの瞬間に買います。</p>
+
+    <div class="diagram-wrap">
+      <svg viewBox="0 0 700 300" xmlns="http://www.w3.org/2000/svg" width="100%">
+        <!-- Background -->
+        <text x="350" y="20" fill="#64748b" font-size="11" text-anchor="middle" font-weight="600" letter-spacing="2">VOLATILITY CONTRACTION PATTERN</text>
+
+        <!-- Prior uptrend -->
+        <path d="M 30,250 Q 60,240 90,220 T 140,180 T 180,160 T 200,140" fill="none" stroke="#22c55e" stroke-width="2" opacity="0.6"/>
+        <text x="110" y="265" fill="#22c55e" font-size="9" text-anchor="middle">先行上昇トレンド</text>
+
+        <!-- Contraction 1: ~20% -->
+        <path d="M 200,140 Q 220,145 230,175 T 250,190 T 270,170 T 285,155 T 300,145" fill="none" stroke="#e2e8f0" stroke-width="2"/>
+        <!-- Contraction 1 range lines -->
+        <line x1="200" y1="140" x2="200" y2="190" stroke="#ef4444" stroke-width="1" stroke-dasharray="3,3" opacity="0.5"/>
+        <text x="195" y="168" fill="#ef4444" font-size="9" text-anchor="end" font-weight="600">T1</text>
+        <text x="195" y="180" fill="#ef4444" font-size="8" text-anchor="end">-20%</text>
+
+        <!-- Contraction 2: ~10% -->
+        <path d="M 300,145 Q 320,150 335,165 T 355,155 T 375,145 T 390,138" fill="none" stroke="#e2e8f0" stroke-width="2"/>
+        <line x1="300" y1="138" x2="300" y2="165" stroke="#eab308" stroke-width="1" stroke-dasharray="3,3" opacity="0.5"/>
+        <text x="295" y="155" fill="#eab308" font-size="9" text-anchor="end" font-weight="600">T2</text>
+        <text x="295" y="167" fill="#eab308" font-size="8" text-anchor="end">-10%</text>
+
+        <!-- Contraction 3: ~5% (tight) -->
+        <path d="M 390,138 Q 410,140 425,148 T 445,142 T 465,138 T 480,135" fill="none" stroke="#e2e8f0" stroke-width="2"/>
+        <line x1="390" y1="135" x2="390" y2="148" stroke="#06b6d4" stroke-width="1" stroke-dasharray="3,3" opacity="0.5"/>
+        <text x="385" y="143" fill="#06b6d4" font-size="9" text-anchor="end" font-weight="600">T3</text>
+        <text x="385" y="155" fill="#06b6d4" font-size="8" text-anchor="end">-5%</text>
+
+        <!-- Pivot line -->
+        <line x1="200" y1="135" x2="520" y2="135" stroke="#818cf8" stroke-width="1" stroke-dasharray="6,3" opacity="0.6"/>
+        <text x="525" y="138" fill="#818cf8" font-size="9" font-weight="600">PIVOT</text>
+
+        <!-- Breakout -->
+        <path d="M 480,135 Q 500,130 510,125 T 530,110 T 560,90 T 590,75 T 620,65" fill="none" stroke="#22c55e" stroke-width="2.5"/>
+        <text x="575" y="55" fill="#22c55e" font-size="10" text-anchor="middle" font-weight="700">BREAKOUT ↑</text>
+
+        <!-- Volume bars -->
+        <text x="350" y="295" fill="#64748b" font-size="9" text-anchor="middle">出来高</text>
+        <!-- High vol at start -->
+        <rect x="210" y="255" width="6" height="22" fill="#e2e8f0" opacity="0.3" rx="1"/>
+        <rect x="230" y="260" width="6" height="17" fill="#e2e8f0" opacity="0.3" rx="1"/>
+        <rect x="250" y="258" width="6" height="19" fill="#e2e8f0" opacity="0.3" rx="1"/>
+        <!-- Decreasing vol -->
+        <rect x="310" y="264" width="6" height="13" fill="#e2e8f0" opacity="0.25" rx="1"/>
+        <rect x="330" y="266" width="6" height="11" fill="#e2e8f0" opacity="0.2" rx="1"/>
+        <rect x="350" y="268" width="6" height="9" fill="#e2e8f0" opacity="0.2" rx="1"/>
+        <!-- Very low vol in tight area -->
+        <rect x="400" y="271" width="6" height="6" fill="#e2e8f0" opacity="0.15" rx="1"/>
+        <rect x="420" y="272" width="6" height="5" fill="#e2e8f0" opacity="0.15" rx="1"/>
+        <rect x="440" y="271" width="6" height="6" fill="#e2e8f0" opacity="0.15" rx="1"/>
+        <rect x="460" y="272" width="6" height="5" fill="#e2e8f0" opacity="0.15" rx="1"/>
+        <!-- Volume surge on breakout -->
+        <rect x="500" y="248" width="6" height="29" fill="#22c55e" opacity="0.6" rx="1"/>
+        <rect x="520" y="252" width="6" height="25" fill="#22c55e" opacity="0.5" rx="1"/>
+        <rect x="540" y="255" width="6" height="22" fill="#22c55e" opacity="0.5" rx="1"/>
+
+        <!-- Buy point annotation -->
+        <circle cx="490" cy="133" r="8" fill="none" stroke="#22c55e" stroke-width="2"/>
+        <text x="490" y="120" fill="#22c55e" font-size="9" text-anchor="middle" font-weight="700">BUY</text>
+      </svg>
+      <div class="diagram-caption">T1→T2→T3: 各収縮の幅が段階的に縮小。出来高もPivot付近で最小に。ブレイクアウト時に出来高急増。</div>
+    </div>
+
+    <!-- VCP Detail Cards -->
+    <div class="card" onclick="this.classList.toggle('open')">
+      <div class="card-header">
+        <div class="card-num" style="background:var(--cyan)">1</div>
+        <div class="card-header-text">
+          <h3>VCPの構造</h3>
+          <span>なぜ収縮が繰り返されるのか</span>
+        </div>
+        <div class="card-toggle">+</div>
+      </div>
+      <div class="card-body"><div class="card-content">
+        <h4>メカニズム</h4>
+        <ul>
+          <li>上昇後、利益確定売りで最初の大きな調整（T1）が発生する。典型的には10〜25%程度の下落</li>
+          <li>機関投資家が買い支え、株価は回復。しかしまた売りが出る（T2）。ただし、前回より売り手が減っているため下落幅は小さい</li>
+          <li>このプロセスが2〜4回繰り返される。<strong>各収縮の幅が前回より小さくなる</strong>のが本質</li>
+          <li>典型的なパターン：18% → 12% → 6% のように段階的に縮小</li>
+          <li>最終的に値動きが極端に小さくなり（タイトエリア）、売り手が完全に枯渇したことを示す</li>
+        </ul>
+        <h4>なぜこれが重要か</h4>
+        <ul>
+          <li>売り手の枯渇 = 少しの買い圧力で株価が大きく動く「スプリング」状態</li>
+          <li>タイトな収縮の直上にピボット（ブレイクアウトライン）を引ける → <strong>ストップロスを非常にタイトに設定できる</strong></li>
+          <li>リスクが小さく、リワードが大きい非対称な構造がVCPの本質的な価値</li>
+        </ul>
+      </div></div>
+    </div>
+
+    <div class="card" onclick="this.classList.toggle('open')">
+      <div class="card-header">
+        <div class="card-num" style="background:var(--cyan)">2</div>
+        <div class="card-header-text">
+          <h3>VCPの識別チェックリスト</h3>
+          <span>本物のVCPと偽物を見分ける</span>
+        </div>
+        <div class="card-toggle">+</div>
+      </div>
+      <div class="card-body"><div class="card-content">
+        <h4>必須条件</h4>
+        <ul>
+          <li><strong>先行する上昇トレンド</strong>が存在すること（Stage 2であること）</li>
+          <li>少なくとも<strong>2〜4回の収縮</strong>があり、各収縮幅が前回より小さい</li>
+          <li>収縮期間中に<strong>出来高が段階的に減少</strong>している</li>
+          <li>最後の収縮で<strong>タイトなレンジ</strong>（日々の値動きが小さい）が形成される</li>
+          <li>各収縮で<strong>安値が切り上がっている</strong>（Higher Lows）</li>
+        </ul>
+        <h4>健全なVCPのサイン</h4>
+        <ul>
+          <li>下落後に素早くリバウンドする（「テニスボール・アクション」とMinerviniが呼ぶ動き）</li>
+          <li>タイトエリアでの日足が、レンジの上半分で引けることが多い</li>
+          <li>ピボット直前の出来高が非常に低い（供給の枯渇）</li>
+        </ul>
+        <h4>偽VCPの警告サイン</h4>
+        <ul>
+          <li>収縮が縮小していない（同じ幅の上下動を繰り返している）</li>
+          <li>収縮期間中に出来高が減少しない、または増加する</li>
+          <li>Stage 2ではない銘柄にVCPらしきパターンが出ている（Stage 1やStage 3のVCPは無効）</li>
+          <li>安値が切り下がっている（Lower Lows → 売り圧力が増加している証拠）</li>
+        </ul>
+      </div></div>
+    </div>
+
+    <div class="card open" onclick="this.classList.toggle('open')">
+      <div class="card-header">
+        <div class="card-num" style="background:var(--s2)">3</div>
+        <div class="card-header-text">
+          <h3>エントリーとエグジットのルール</h3>
+          <span>買い方、損切り、利確の具体的な基準</span>
+        </div>
+        <div class="card-toggle">+</div>
+      </div>
+      <div class="card-body"><div class="card-content">
+        <h4>エントリー</h4>
+        <ul>
+          <li>VCPの最終収縮の上端（ピボットポイント）を、<strong>出来高の急増を伴って上抜けた瞬間</strong>に買う</li>
+          <li>出来高は平均の<strong>40〜50%以上の増加</strong>が目安</li>
+          <li>ピボットからの距離が0〜10%以内であること（離れすぎたら追わない）</li>
+          <li>出来高が伴わないブレイクアウトは見送る</li>
+        </ul>
+        <h4>ストップロス（損切り）</h4>
+        <ul>
+          <li>エントリー価格から<strong>最大7〜8%下</strong>に設定</li>
+          <li>VCPが十分にタイトなら、最後の収縮の安値の直下（5%未満のストップも可能）</li>
+          <li>ストップに触れたら<strong>即座に手仕舞い。例外なし</strong></li>
+          <li>Minerviniの平均損失は平均利益の半分以下。これが長期的な勝ちを生む構造</li>
+        </ul>
+        <h4>利確（プロフィットテイク）</h4>
+        <ul>
+          <li>利益がリスクの<strong>2〜3倍</strong>（2R〜3R）に達したら部分利確</li>
+          <li>合理的な利益が出たらストップロスをブレイクイーブン（取得価格）に移動</li>
+          <li>残りのポジションは移動平均線またはスイングローを使ったトレーリングストップで伸ばす</li>
+          <li>ファンダメンタルのカタリスト（決算好調など）がある場合、ホールド期間を延長できる</li>
+        </ul>
+      </div></div>
+    </div>
+  </div>
+</section>
+
+<!-- Position Sizing -->
+<section>
+  <div class="container">
+    <div class="section-label">Risk Management</div>
+    <h2>ポジションサイジング</h2>
+    <p>Minerviniは1トレードあたりの最大リスクを<strong>口座全体の1.25%〜2.5%</strong>に制限しています。63万円の口座なら：</p>
+    <div class="tt-grid">
+      <div class="tt-item"><div class="tt-num" style="background:var(--s2)">例</div><div class="tt-text"><strong>口座63万円 × リスク2% = 1トレードの最大損失12,600円</strong><br>ストップロスが−5%の場合 → ポジションサイズ = 12,600 ÷ 5% = 252,000円（約25万円分）<br>ストップロスが−8%の場合 → ポジションサイズ = 12,600 ÷ 8% = 157,500円（約16万円分）</div></div>
+    </div>
+    <p>VCPが十分にタイトでストップが小さければ、同じリスク金額でより大きなポジションが取れる。これがVCPの「タイトなストップ」の実務的な価値です。</p>
+  </div>
+</section>
+
+<!-- SEPA as System -->
+<section>
+  <div class="container">
+    <div class="section-label">Integrated System</div>
+    <h2>SEPAは統合システム</h2>
+    <p>ここまでの内容をSEPAフレームワークに戻して整理します。</p>
+    <div class="rule-list">
+      <div class="rule"><div class="rule-num" style="background:var(--cyan)">P</div><div class="rule-text"><strong>Price Action → トレンドテンプレート</strong>で候補をフィルタリング。8項目すべてを満たす銘柄だけが次のステップに進む。</div></div>
+      <div class="rule"><div class="rule-num" style="background:var(--cyan)">S</div><div class="rule-text"><strong>Specific Entry Point → VCP</strong>でエントリータイミングを定義。ピボット上抜け＋出来高急増の瞬間に買う。</div></div>
+      <div class="rule"><div class="rule-num" style="background:var(--s2)">E</div><div class="rule-text"><strong>Earnings → ファンダメンタル確認</strong>。四半期EPSが前年同期比20%以上成長、売上も伸びている。業績が裏付けとなる。（Module 3のCAN SLIMで詳しく学ぶ）</div></div>
+      <div class="rule"><div class="rule-num" style="background:var(--s3)">A</div><div class="rule-text"><strong>Announcement → カタリストの有無</strong>。新製品、決算サプライズ、業界のトレンドなど。ポジティブなカタリストがあるとブレイクアウト後の持続力が増す。</div></div>
+    </div>
+    <p><strong>この4つが揃ったとき、かつそのときだけトレードする。</strong>1つでも欠けていたら見送る。「惜しい」は買わない。</p>
+  </div>
+</section>
+
+<!-- Common Mistakes -->
+<section>
+  <div class="container">
+    <div class="section-label">Pitfalls</div>
+    <h2>初心者が犯しやすい間違い</h2>
+    <div class="rule-list">
+      <div class="rule"><div class="rule-num" style="background:var(--s4)">✕</div><div class="rule-text"><strong>8項目中7項目を満たしている銘柄を買う</strong><br>Minerviniは完全合致を要求する。部分一致の成功率は著しく低い。</div></div>
+      <div class="rule"><div class="rule-num" style="background:var(--s4)">✕</div><div class="rule-text"><strong>トレンドテンプレート通過を「買いシグナル」と勘違いする</strong><br>テンプレートは候補リスト。実際のエントリーにはVCPセットアップが必要。</div></div>
+      <div class="rule"><div class="rule-num" style="background:var(--s4)">✕</div><div class="rule-text"><strong>ブレイクアウトを追いかける</strong><br>ピボットから10%以上離れたら諦める。追いかけるとストップが遠くなり、リスクリワードが崩れる。</div></div>
+      <div class="rule"><div class="rule-num" style="background:var(--s4)">✕</div><div class="rule-text"><strong>出来高を無視する</strong><br>出来高なきブレイクアウトの60〜70%は失敗する。出来高は機関投資家の「本気度」を示す。</div></div>
+      <div class="rule"><div class="rule-num" style="background:var(--s4)">✕</div><div class="rule-text"><strong>ストップロスを動かす（広げる）</strong><br>含み損が拡大してストップを引き下げるのは、ルールを破る行為。最初に設定したストップは絶対。</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- Bridge -->
+<section>
+  <div class="container">
+    <div class="section-label">Connection</div>
+    <h2>Module 3への橋——CAN SLIMとの接続</h2>
+    <p>SEPAの「E（Earnings）」を深掘りするのがModule 3のCAN SLIMです。</p>
+    <div class="bridge">
+      <h3>Minervini → O'Neil の接続</h3>
+      <p><strong>Minerviniが教えること：</strong>トレンドテンプレートでフィルタリングし、VCPでエントリーせよ。業績は成長していること。</p>
+      <p><strong>O'Neilが教えること：</strong>業績のどこを、どう見るか。EPS成長率、売上成長率、機関投資家の動向、市場全体の方向性。</p>
+      <p style="margin-top:12px;color:var(--text3);font-size:13px">MinerviniはO'Neilの弟子筋にあたります。両者の手法は多くの点で重なっていますが、Minerviniのほうがエントリーのタイミングに特化し、O'Neilのほうがファンダメンタル分析の体系が広い。</p>
+    </div>
+  </div>
+</section>
+
+<!-- Self-Check -->
+<section>
+  <div class="container">
+    <div class="section-label">Self Check</div>
+    <h2>理解度チェックリスト</h2>
+    <div class="checklist">
+      <h3>☑ MODULE 2 COMPLETION</h3>
+      <label class="check-item"><input type="checkbox"> SEPAの4要素（S, E, P, A）をそれぞれ説明できる</label>
+      <label class="check-item"><input type="checkbox"> 8項目トレンドテンプレートをすべて列挙できる</label>
+      <label class="check-item"><input type="checkbox"> トレンドテンプレートの通過が「買いシグナル」ではない理由を説明できる</label>
+      <label class="check-item"><input type="checkbox"> VCPの構造（段階的な収縮、出来高の減少、ピボット）を説明できる</label>
+      <label class="check-item"><input type="checkbox"> VCPのエントリー条件（ピボット突破＋出来高急増）を述べられる</label>
+      <label class="check-item"><input type="checkbox"> ストップロスの設定方法（最大7〜8%、またはタイト収縮の直下）を説明できる</label>
+      <label class="check-item"><input type="checkbox"> ポジションサイジングの計算ができる（口座リスク% → 最大損失額 → ポジションサイズ）</label>
+      <label class="check-item"><input type="checkbox"> 日本株でRS指標をどう代替するか、考え方を述べられる</label>
+      <label class="check-item"><input type="checkbox"> Module 1のStage AnalysisとSEPA/VCPの関係を説明できる</label>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <p>Swing Trading Curriculum — Module 02 / 08</p>
+    <p style="margin-top:8px">原典：Mark Minervini『Trade Like a Stock Market Wizard』(2013)『Think & Trade Like a Champion』(2017)</p>
+    <p style="margin-top:4px">本教材は投資助言ではありません。投資判断はご自身の責任で行ってください。</p>
+    <p style="margin-top:16px"><a href="module-01-stage-analysis.html">← Module 01: Stage Analysis</a>　｜　<a href="module-03-canslim.html">Module 03: CAN SLIM →</a></p>
+  </div>
+</footer>
+
+</body>
+</html>
