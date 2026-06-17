@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Module 04 — リスク管理とポジションサイジング | Swing Trading Curriculum</title>
+<style>
+  :root {
+    --bg: #0a0c10; --surface: #12151e; --surface2: #1a1f2e;
+    --border: #1e293b; --text: #e2e8f0; --text2: #94a3b8; --text3: #64748b;
+    --s2: #22c55e; --s4: #ef4444; --s3: #eab308;
+    --accent: #818cf8; --cyan: #06b6d4; --pink: #ec4899;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { background: var(--bg); color: var(--text); font-family: "Hiragino Kaku Gothic ProN","Noto Sans JP","Yu Gothic",sans-serif; line-height: 1.8; font-size: 15px; -webkit-font-smoothing: antialiased; }
+  .container { max-width: 760px; margin: 0 auto; padding: 0 24px; }
+  .hero { padding: 80px 0 60px; border-bottom: 1px solid var(--border); background: linear-gradient(180deg, #0f1219 0%, var(--bg) 100%); }
+  .hero-module { font-size: 11px; letter-spacing: 4px; text-transform: uppercase; color: var(--accent); margin-bottom: 16px; font-weight: 600; }
+  .hero h1 { font-size: clamp(28px, 5vw, 42px); font-weight: 800; line-height: 1.3; letter-spacing: -0.5px; margin-bottom: 12px; }
+  .hero h1 em { font-style: normal; color: var(--pink); }
+  .hero-sub { font-size: 16px; color: var(--text2); max-width: 560px; }
+  .hero-meta { margin-top: 32px; display: flex; gap: 24px; flex-wrap: wrap; font-size: 12px; color: var(--text3); }
+  section { padding: 56px 0; border-bottom: 1px solid var(--border); }
+  section:last-of-type { border-bottom: none; }
+  .section-label { font-size: 11px; letter-spacing: 3px; text-transform: uppercase; color: var(--accent); margin-bottom: 20px; font-weight: 600; }
+  h2 { font-size: 22px; font-weight: 700; margin-bottom: 16px; letter-spacing: -0.3px; line-height: 1.4; }
+  p { color: var(--text2); margin-bottom: 16px; }
+  p strong { color: var(--text); font-weight: 600; }
+  blockquote { border-left: 3px solid var(--accent); padding: 16px 20px; margin: 24px 0; background: var(--surface); border-radius: 0 8px 8px 0; }
+  blockquote p { font-size: 14px; color: var(--text); margin: 0; font-style: italic; }
+  blockquote cite { display: block; font-size: 12px; color: var(--text3); margin-top: 8px; font-style: normal; }
+  .formula-box { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 24px; margin: 24px 0; text-align: center; }
+  .formula-box .formula { font-size: 18px; font-weight: 700; color: var(--text); margin: 12px 0; font-family: "SF Mono","Fira Code",monospace; letter-spacing: 0.5px; }
+  .formula-box .formula-label { font-size: 12px; color: var(--text3); letter-spacing: 1px; text-transform: uppercase; }
+  .formula-box .formula-desc { font-size: 13px; color: var(--text2); margin-top: 8px; }
+  .example { background: var(--surface2); border: 1px solid var(--border); border-radius: 12px; padding: 24px; margin: 20px 0; }
+  .example-label { font-size: 11px; font-weight: 700; color: var(--cyan); letter-spacing: 2px; margin-bottom: 12px; text-transform: uppercase; }
+  .example-row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid var(--border); font-size: 14px; }
+  .example-row:last-child { border-bottom: none; }
+  .example-row .label { color: var(--text2); }
+  .example-row .value { color: var(--text); font-weight: 600; font-family: "SF Mono","Fira Code",monospace; }
+  .example-row .value.green { color: var(--s2); }
+  .example-row .value.red { color: var(--s4); }
+  .example-row .value.accent { color: var(--accent); }
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; margin-bottom: 16px; overflow: hidden; }
+  .card:hover { border-color: var(--text3); }
+  .card-header { padding: 20px 24px; cursor: pointer; display: flex; align-items: center; gap: 16px; user-select: none; }
+  .card-header:hover { background: var(--surface2); }
+  .card-num { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 800; color: var(--bg); flex-shrink: 0; }
+  .card-header-text h3 { font-size: 16px; font-weight: 700; margin-bottom: 2px; }
+  .card-header-text span { font-size: 13px; color: var(--text2); }
+  .card-toggle { margin-left: auto; font-size: 20px; color: var(--text3); transition: transform 0.3s; flex-shrink: 0; }
+  .card.open .card-toggle { transform: rotate(45deg); }
+  .card-body { max-height: 0; overflow: hidden; transition: max-height 0.4s ease; }
+  .card.open .card-body { max-height: 3000px; }
+  .card-content { padding: 0 24px 24px; }
+  .card-content h4 { font-size: 13px; font-weight: 700; color: var(--text); letter-spacing: 1px; text-transform: uppercase; margin: 20px 0 10px; padding-top: 16px; border-top: 1px solid var(--border); }
+  .card-content h4:first-child { border-top: none; padding-top: 0; margin-top: 0; }
+  .card-content ul { list-style: none; padding: 0; }
+  .card-content li { padding: 6px 0 6px 20px; color: var(--text2); font-size: 14px; position: relative; }
+  .card-content li::before { content: ""; position: absolute; left: 0; top: 14px; width: 6px; height: 6px; border-radius: 50%; background: var(--pink); }
+  .warn-box { background: var(--surface2); border-left: 3px solid var(--s4); border-radius: 0 8px 8px 0; padding: 16px 20px; margin: 20px 0; }
+  .warn-box p { margin: 0; font-size: 14px; }
+  .insight-box { background: var(--surface2); border-left: 3px solid var(--s2); border-radius: 0 8px 8px 0; padding: 16px 20px; margin: 20px 0; }
+  .insight-box p { margin: 0; font-size: 14px; }
+  .survival-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; margin: 24px 0; }
+  .survival-item { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 16px; text-align: center; }
+  .survival-item .loss { font-size: 24px; font-weight: 800; margin-bottom: 4px; }
+  .survival-item .needed { font-size: 13px; color: var(--text2); }
+  .survival-item .label { font-size: 11px; color: var(--text3); margin-top: 4px; }
+  .rule-list { margin: 24px 0; }
+  .rule { display: flex; gap: 16px; padding: 16px 0; border-bottom: 1px solid var(--border); align-items: flex-start; }
+  .rule:last-child { border-bottom: none; }
+  .rule-num { width: 32px; height: 32px; border-radius: 8px; background: var(--accent); color: var(--bg); display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 800; flex-shrink: 0; }
+  .rule-text { font-size: 14px; color: var(--text2); }
+  .rule-text strong { color: var(--text); }
+  .checklist { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 24px; margin: 24px 0; }
+  .checklist h3 { font-size: 14px; font-weight: 700; margin-bottom: 16px; letter-spacing: 1px; }
+  .check-item { display: flex; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--border); font-size: 14px; color: var(--text2); cursor: pointer; }
+  .check-item:last-child { border-bottom: none; }
+  .check-item input[type="checkbox"] { width: 18px; height: 18px; accent-color: var(--s2); cursor: pointer; }
+  .check-item:has(input:checked) { color: var(--text3); text-decoration: line-through; }
+  .bridge { background: linear-gradient(135deg, var(--surface) 0%, var(--surface2) 100%); border: 1px solid var(--border); border-radius: 12px; padding: 32px; margin: 24px 0; }
+  .bridge h3 { font-size: 16px; margin-bottom: 12px; }
+  .bridge p { font-size: 14px; }
+  footer { padding: 40px 0; text-align: center; font-size: 12px; color: var(--text3); border-top: 1px solid var(--border); }
+  footer a { color: var(--accent); text-decoration: none; }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="container">
+    <div class="hero-module">Module 04 / 08</div>
+    <h1>リスク管理と<br><em>ポジションサイジング</em></h1>
+    <p class="hero-sub">銘柄選びより、資金管理のほうがリターンを左右する。<br>63万円を最大限の学習回数に変換する数学。</p>
+    <div class="hero-meta">
+      <span>📖 Van Tharp『Trade Your Way to Financial Freedom』</span>
+      <span>📖 John Kelly Jr.（Kelly Criterion, 1956）</span>
+      <span>⏱ 読了20分</span>
+    </div>
+  </div>
+</header>
+
+<!-- Why This Matters Most -->
+<section>
+  <div class="container">
+    <div class="section-label">The Most Important Module</div>
+    <h2>なぜ資金管理が銘柄選びより重要か</h2>
+    <p>Van Tharpの研究によれば、<strong>トレードの長期成績のばらつきのうち、エントリーやエグジットのシグナルより、ポジションサイジングのほうが大きな影響を持つ</strong>。同じ銘柄選定手法を使っても、資金管理の方法が違えば結果は劇的に変わります。</p>
+    <p>たとえば勝率50%、平均利益が平均損失の2倍（2R）のシステムがあるとします。この手法の期待値はプラスですが、1回のトレードで口座の50%を賭ければ数回の連敗で破産します。同じ手法でも口座の2%だけリスクにさらせば、長期的に複利で資金が増えます。<strong>手法は同じ。変わったのはサイズだけ。</strong></p>
+    <blockquote>
+      <p>ポジションサイジングはトレーディングにおける聖杯だ。それは最も退屈に聞こえるテーマだが、最もリターンに影響する。</p>
+      <cite>— Van Tharp</cite>
+    </blockquote>
+  </div>
+</section>
+
+<!-- Loss Recovery Math -->
+<section>
+  <div class="container">
+    <div class="section-label">Survival Math</div>
+    <h2>損失回復の非対称性</h2>
+    <p>リスク管理を学ぶ前に、まずこの事実を体で理解してください。<strong>損失と回復は対称ではない。</strong></p>
+    <div class="survival-grid">
+      <div class="survival-item">
+        <div class="loss" style="color:var(--s3)">-10%</div>
+        <div class="needed">回復に必要: <strong>+11%</strong></div>
+        <div class="label">ほぼ対称</div>
+      </div>
+      <div class="survival-item">
+        <div class="loss" style="color:var(--s4)">-25%</div>
+        <div class="needed">回復に必要: <strong>+33%</strong></div>
+        <div class="label">やや非対称</div>
+      </div>
+      <div class="survival-item">
+        <div class="loss" style="color:var(--s4)">-50%</div>
+        <div class="needed">回復に必要: <strong>+100%</strong></div>
+        <div class="label">深刻</div>
+      </div>
+      <div class="survival-item">
+        <div class="loss" style="color:var(--s4)">-75%</div>
+        <div class="needed">回復に必要: <strong>+300%</strong></div>
+        <div class="label">ほぼ不可能</div>
+      </div>
+    </div>
+    <p>63万円が31.5万円（-50%）になったら、元に戻すには残りの31.5万円を<strong>倍にする</strong>必要がある。15.75万円（-75%）になったら、<strong>4倍</strong>にしなければならない。だから大きな損失を避けることが、大きな利益を取ることよりもはるかに重要なのです。</p>
+    <div class="warn-box">
+      <p><strong>⚠ 鉄則：</strong>資金を守ることが最優先。利益を伸ばすのはその次。MinerviniもO'Neilも、まず損切りの話から入る理由がここにある。</p>
+    </div>
+  </div>
+</section>
+
+<!-- Position Sizing Formula -->
+<section>
+  <div class="container">
+    <div class="section-label">Core Formula</div>
+    <h2>ポジションサイジングの基本公式</h2>
+    <p>すべてのトレードで使う、最も重要な公式がこれです。</p>
+
+    <div class="formula-box">
+      <div class="formula-label">Position Sizing Formula</div>
+      <div class="formula">ポジションサイズ = (口座資金 × リスク%) ÷ (株価 − 損切り価格)</div>
+      <div class="formula-desc">「1回のトレードでいくらまで失っていいか」から逆算して、買う株数を決める</div>
+    </div>
+
+    <div class="example">
+      <div class="example-label">📐 計算例：63万円の口座</div>
+      <div class="example-row"><span class="label">口座資金</span><span class="value">¥630,000</span></div>
+      <div class="example-row"><span class="label">1トレードのリスク上限</span><span class="value accent">2%</span></div>
+      <div class="example-row"><span class="label">最大損失額</span><span class="value red">¥12,600</span></div>
+      <div class="example-row"><span class="label">エントリー価格</span><span class="value">¥1,500</span></div>
+      <div class="example-row"><span class="label">損切り価格（-5%）</span><span class="value">¥1,425</span></div>
+      <div class="example-row"><span class="label">1株あたりリスク</span><span class="value">¥75</span></div>
+      <div class="example-row"><span class="label">買える株数</span><span class="value green">168株 → 100株（単元株）</span></div>
+      <div class="example-row"><span class="label">ポジション金額</span><span class="value">¥150,000</span></div>
+      <div class="example-row"><span class="label">実際のリスク金額</span><span class="value red">¥7,500（口座の1.19%）</span></div>
+    </div>
+
+    <p>100株単位の制約で端数が出るため、実際のリスクは計算値より小さくなります。これは安全側のずれなので問題ありません。</p>
+
+    <div class="example">
+      <div class="example-label">📐 VCPでタイトなストップの場合</div>
+      <div class="example-row"><span class="label">エントリー価格</span><span class="value">¥1,500</span></div>
+      <div class="example-row"><span class="label">損切り価格（-3%、VCPの直下）</span><span class="value">¥1,455</span></div>
+      <div class="example-row"><span class="label">1株あたりリスク</span><span class="value">¥45</span></div>
+      <div class="example-row"><span class="label">買える株数</span><span class="value green">280株 → 200株</span></div>
+      <div class="example-row"><span class="label">ポジション金額</span><span class="value">¥300,000</span></div>
+      <div class="example-row"><span class="label">実際のリスク金額</span><span class="value red">¥9,000（口座の1.43%）</span></div>
+    </div>
+
+    <div class="insight-box">
+      <p><strong>💡 ポイント：</strong>VCPが十分にタイトで損切りが近ければ、同じリスク金額でより大きなポジションを持てる。これがModule 2で「VCPのタイトなストップが実務的に価値がある」と説明した理由。損切り幅が小さい = 同じリスクでレバレッジが利く（信用取引を使わずに）。</p>
+    </div>
+  </div>
+</section>
+
+<!-- R-Multiple -->
+<section>
+  <div class="container">
+    <div class="section-label">R-Multiple</div>
+    <h2>R倍数——トレードの共通通貨</h2>
+    <p>Van Tharpが提唱した「R」は、<strong>1回のトレードの初期リスク金額</strong>を1Rと定義し、すべてのトレードをRの倍数で評価する考え方です。</p>
+
+    <div class="formula-box">
+      <div class="formula-label">R-Multiple</div>
+      <div class="formula">R倍数 = 実際の損益 ÷ 初期リスク金額（1R）</div>
+    </div>
+
+    <div class="example">
+      <div class="example-label">📐 R倍数の例</div>
+      <div class="example-row"><span class="label">初期リスク（1R）</span><span class="value">¥7,500</span></div>
+      <div class="example-row"><span class="label">損切りで退場</span><span class="value red">-1R（¥7,500の損失）</span></div>
+      <div class="example-row"><span class="label">利益¥15,000で利確</span><span class="value green">+2R</span></div>
+      <div class="example-row"><span class="label">利益¥22,500で利確</span><span class="value green">+3R</span></div>
+      <div class="example-row"><span class="label">利益¥37,500で利確</span><span class="value green">+5R</span></div>
+    </div>
+
+    <p><strong>なぜRで考えるのか？</strong>金額で考えると、ポジションサイズの違いで比較できない。Rで統一すれば、「このトレードはリスクに対してどれだけリターンがあったか」を一貫して評価できる。トレードジャーナルにはすべてのトレードをR倍数で記録することを推奨します。</p>
+  </div>
+</section>
+
+<!-- Expectancy -->
+<section>
+  <div class="container">
+    <div class="section-label">Expectancy</div>
+    <h2>期待値——システムの「時給」</h2>
+    <p>勝率だけではシステムの良し悪しは判断できません。勝率30%でも、勝つときに大きく勝てば全体としてプラスになる。これを数値化したのが<strong>期待値（Expectancy）</strong>です。</p>
+
+    <div class="formula-box">
+      <div class="formula-label">Expectancy (R)</div>
+      <div class="formula">期待値 = (勝率 × 平均利益R) − (敗率 × 平均損失R)</div>
+      <div class="formula-desc">1トレードあたり平均何R稼げるかを示す。正なら長期的に儲かるシステム</div>
+    </div>
+
+    <div class="example">
+      <div class="example-label">📐 期待値の計算例</div>
+      <div class="example-row"><span class="label">勝率</span><span class="value">40%</span></div>
+      <div class="example-row"><span class="label">平均勝ちトレード</span><span class="value green">+2.5R</span></div>
+      <div class="example-row"><span class="label">敗率</span><span class="value">60%</span></div>
+      <div class="example-row"><span class="label">平均負けトレード</span><span class="value red">-1.0R</span></div>
+      <div class="example-row"><span class="label">期待値</span><span class="value accent">(0.4 × 2.5) − (0.6 × 1.0) = +0.40R</span></div>
+    </div>
+
+    <p>この例では10回トレードすると平均で+4R。1Rが¥7,500なら、10回のトレードで平均¥30,000の利益。<strong>勝率40%（10回中6回負ける）でも、損小利大を徹底すればプラスになる。</strong></p>
+
+    <div class="warn-box">
+      <p><strong>⚠ 期待値がマイナスなら：</strong>Kelly Criterionはマイナスの値を返す。それはポジションサイズの問題ではなく、<strong>その手法自体をトレードすべきでない</strong>というシグナル。トレード回数を増やしても負けが累積するだけ。</p>
+    </div>
+  </div>
+</section>
+
+<!-- Kelly Criterion -->
+<section>
+  <div class="container">
+    <div class="section-label">Kelly Criterion</div>
+    <h2>Kelly Criterion——数学的に最適なサイズ</h2>
+    <p>1956年にBell研究所のJohn Kelly Jr.が開発した公式。<strong>長期的な資産成長率を最大化する、理論上の最適ベットサイズ</strong>を教えてくれます。</p>
+
+    <div class="formula-box">
+      <div class="formula-label">Kelly Formula</div>
+      <div class="formula">f* = W − (1 − W) / R</div>
+      <div class="formula-desc">W = 勝率（小数）、R = 平均利益 ÷ 平均損失</div>
+    </div>
+
+    <div class="example">
+      <div class="example-label">📐 Kelly計算例</div>
+      <div class="example-row"><span class="label">勝率 (W)</span><span class="value">0.45（45%）</span></div>
+      <div class="example-row"><span class="label">平均利益/平均損失 (R)</span><span class="value">2.0</span></div>
+      <div class="example-row"><span class="label">Full Kelly</span><span class="value accent">0.45 − 0.55/2.0 = 0.175（17.5%）</span></div>
+      <div class="example-row"><span class="label">Half Kelly（推奨）</span><span class="value green">8.75%</span></div>
+      <div class="example-row"><span class="label">Quarter Kelly（保守的）</span><span class="value green">4.375%</span></div>
+    </div>
+
+    <div class="card open" onclick="this.classList.toggle('open')">
+      <div class="card-header">
+        <div class="card-num" style="background:var(--s4)">!</div>
+        <div class="card-header-text">
+          <h3>Full Kellyを絶対に使ってはいけない理由</h3>
+          <span>理論と実践のギャップ</span>
+        </div>
+        <div class="card-toggle">+</div>
+      </div>
+      <div class="card-body"><div class="card-content">
+        <ul>
+          <li><strong>前提条件が現実に存在しない。</strong>Kellyは勝率とR比率が正確にわかっている前提。実際の勝率は推定値であり、100トレードのサンプルでも±10%の誤差がある</li>
+          <li><strong>ドローダウンが壊滅的。</strong>Full Kellyは数学的に最適だが、途中で-50%以上のドローダウンが普通に発生する。心理的に耐えられない</li>
+          <li><strong>トレード間の独立性がない。</strong>Kellyは各トレードが独立していると仮定するが、実際は市場環境（相関する連敗）がある</li>
+        </ul>
+        <h4>実務での使い方</h4>
+        <ul>
+          <li><strong>Quarter Kelly（1/4 Kelly）</strong>を使う。ドローダウンが劇的に減り、推定誤差にも耐えられる</li>
+          <li>それでも上限として<strong>口座の2%ルール</strong>を併用する。Kellyが何%を出しても、1トレードのリスクは口座の2%を超えない</li>
+          <li>Kellyは「どのくらいのサイズが適切か」の方向感を教えてくれるツール。精密な数値として使うものではない</li>
+        </ul>
+      </div></div>
+    </div>
+  </div>
+</section>
+
+<!-- 2% Rule and Practical -->
+<section>
+  <div class="container">
+    <div class="section-label">Practical Rules</div>
+    <h2>実践ルール：63万円の口座で</h2>
+
+    <div class="rule-list">
+      <div class="rule"><div class="rule-num">1</div><div class="rule-text"><strong>1トレードのリスク上限は口座の2%（¥12,600）。</strong>これが鉄則。どんなに自信があるトレードでも、1Rが¥12,600を超えるサイズは取らない。</div></div>
+      <div class="rule"><div class="rule-num">2</div><div class="rule-text"><strong>同時ポジションの合計リスクは口座の6%まで。</strong>3銘柄を同時に持つなら、合計のリスクが¥37,800を超えない。全ポジションが同時にストップに触れても、口座の6%損失で済む。</div></div>
+      <div class="rule"><div class="rule-num">3</div><div class="rule-text"><strong>連敗時はサイズを下げる。</strong>3連敗したらリスクを1%に半減。勝ちが戻ってきたら2%に戻す。連敗はシステムの問題か、市場環境の問題か、自分のメンタルの問題かを切り分える。</div></div>
+      <div class="rule"><div class="rule-num">4</div><div class="rule-text"><strong>口座が20%以上減少したら一度すべて手仕舞い。</strong>63万円が50.4万円以下になったら、ポジションを全て閉じて1〜2週間休む。トレードジャーナルを振り返り、何が起きたかを分析してから再開。</div></div>
+      <div class="rule"><div class="rule-num">5</div><div class="rule-text"><strong>損切りは注文時に設定する。</strong>「後で入れよう」は100%入れ忘れる。エントリーと同時に損切り注文を出す。楽天証券なら逆指値注文で自動化できる。</div></div>
+    </div>
+
+    <div class="example">
+      <div class="example-label">📐 63万円の生存数学</div>
+      <div class="example-row"><span class="label">リスク2%、毎回損切り(-1R)</span><span class="value">50連敗で口座が-63%（約23万円）</span></div>
+      <div class="example-row"><span class="label">リスク2%、勝率40%、+2R平均</span><span class="value">期待値+0.40R/トレード</span></div>
+      <div class="example-row"><span class="label">月10トレード × 0.40R × ¥12,600</span><span class="value green">月+¥50,400（+8%/月）理論値</span></div>
+      <div class="example-row"><span class="label">ただし初期は勝率も低く、Rも安定しない</span><span class="value accent">最初の3ヶ月は「学費」と割り切る</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- Journal Connection -->
+<section>
+  <div class="container">
+    <div class="section-label">Feedback Loop</div>
+    <h2>トレードジャーナルとの接続</h2>
+    <p>リスク管理はトレードジャーナルと一体で機能します。記録すべき数値：</p>
+    <div class="rule-list">
+      <div class="rule"><div class="rule-num" style="background:var(--pink)">R</div><div class="rule-text"><strong>各トレードのR倍数。</strong>「何R勝ったか、何R負けたか」をトレードごとに記録。</div></div>
+      <div class="rule"><div class="rule-num" style="background:var(--pink)">W</div><div class="rule-text"><strong>累積勝率。</strong>10トレードごとに勝率を更新。自分のシステムの実際の勝率を把握する。</div></div>
+      <div class="rule"><div class="rule-num" style="background:var(--pink)">E</div><div class="rule-text"><strong>期待値。</strong>累積勝率と平均R倍数から期待値を計算。マイナスなら手法を見直すシグナル。</div></div>
+      <div class="rule"><div class="rule-num" style="background:var(--pink)">D</div><div class="rule-text"><strong>最大ドローダウン。</strong>口座のピークからの最大下落幅を常に把握する。20%を超えたら休止ルール発動。</div></div>
+    </div>
+    <p>20〜30トレードのデータが溜まったら、自分の実績値でKelly Criterionを計算してみる。Quarter Kellyが2%ルールと大きく乖離していれば、リスク設定を微調整できます。</p>
+  </div>
+</section>
+
+<!-- Bridge -->
+<section>
+  <div class="container">
+    <div class="section-label">Next</div>
+    <h2>Module 5への橋——トレーディング心理学</h2>
+    <div class="bridge">
+      <h3>ルールは揃った。問題はそれを守れるかどうか</h3>
+      <p>Module 1〜3で「何を、いつ、どこで買うか」を学び、Module 4で「どれだけ買うか」を学びました。ここまでのルールはすべて合理的で、理解は難しくないはずです。</p>
+      <p style="margin-top:12px"><strong>しかし、実際に資金を投入した瞬間、ルールを守れなくなる。</strong>含み損が膨らんで損切りラインを動かす、連敗の焦りでサイズを上げる、利益を確定するのが早すぎる。Module 5では、この「わかっているのにできない」問題の構造と、それに対処するための心理的フレームワークを学びます。</p>
+    </div>
+  </div>
+</section>
+
+<!-- Checklist -->
+<section>
+  <div class="container">
+    <div class="section-label">Self Check</div>
+    <h2>理解度チェックリスト</h2>
+    <div class="checklist">
+      <h3>☑ MODULE 4 COMPLETION</h3>
+      <label class="check-item"><input type="checkbox"> 損失回復の非対称性（-50%の回復には+100%必要）を説明できる</label>
+      <label class="check-item"><input type="checkbox"> ポジションサイジングの公式を使って、具体的な株数を計算できる</label>
+      <label class="check-item"><input type="checkbox"> R倍数の定義と、それを使ってトレードを評価する方法を説明できる</label>
+      <label class="check-item"><input type="checkbox"> 期待値の計算ができ、マイナスの場合の意味を理解している</label>
+      <label class="check-item"><input type="checkbox"> Kelly Criterionの公式と、Full Kellyを使ってはいけない理由を説明できる</label>
+      <label class="check-item"><input type="checkbox"> 2%ルールの意味と、63万円口座での具体的な金額を述べられる</label>
+      <label class="check-item"><input type="checkbox"> 連敗時のルール（サイズ半減）と20%ドローダウン時の休止ルールを説明できる</label>
+      <label class="check-item"><input type="checkbox"> VCPのタイトなストップがポジションサイジングにどう影響するか説明できる</label>
+      <label class="check-item"><input type="checkbox"> トレードジャーナルで記録すべき4つの数値（R, W, E, D）を述べられる</label>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <p>Swing Trading Curriculum — Module 04 / 08</p>
+    <p style="margin-top:8px">原典：Van Tharp『Trade Your Way to Financial Freedom』/ John Kelly Jr. (1956)</p>
+    <p style="margin-top:4px">本教材は投資助言ではありません。投資判断はご自身の責任で行ってください。</p>
+    <p style="margin-top:16px"><a href="module-03-canslim.html">← Module 03: CAN SLIM</a>　｜　<a href="module-05-psychology.html">Module 05: トレーディング心理学 →</a></p>
+  </div>
+</footer>
+
+</body>
+</html>
