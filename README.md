@@ -8,7 +8,7 @@
 |---|--------|--------|
 | 01 | [Stage Analysis (Stan Weinstein)](modules/module-01-stage-analysis.html) | ✅ |
 | 02 | [SEPA / Trend Template / VCP (Mark Minervini)](modules/module-02-sepa-vcp.html) | ✅ |
-| 03 | CAN SLIM 概論 (William O'Neil) | 🔲 |
+| 03 | [CAN SLIM 概論 (William O'Neil)](modules/module-03-canslim.html) | ✅ |
 | 04 | リスク管理とポジションサイジング | 🔲 |
 | 05 | トレーディング心理学 | 🔲 |
 | 06 | チャートパターンと出来高分析 | 🔲 |
@@ -25,7 +25,7 @@
 
 各モジュールは単体のHTMLファイルです。ブラウザで開いてそのまま学習できます。
 
-GitHub Pagesで閲覧: https://ryoutatsu-glitch.github.io/swing-trading-curriculum/modules/
+GitHub Pages: https://ryoutatsu-glitch.github.io/swing-trading-curriculum/modules/
 
 ## ⚠ Disclaimer
 
