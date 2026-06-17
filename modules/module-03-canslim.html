@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Module 03 — CAN SLIM | Swing Trading Curriculum</title>
+<style>
+  :root {
+    --bg: #0a0c10; --surface: #12151e; --surface2: #1a1f2e;
+    --border: #1e293b; --text: #e2e8f0; --text2: #94a3b8; --text3: #64748b;
+    --s2: #22c55e; --s4: #ef4444; --s3: #eab308;
+    --accent: #818cf8; --cyan: #06b6d4; --orange: #f97316;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { background: var(--bg); color: var(--text); font-family: "Hiragino Kaku Gothic ProN","Noto Sans JP","Yu Gothic",sans-serif; line-height: 1.8; font-size: 15px; -webkit-font-smoothing: antialiased; }
+  .container { max-width: 760px; margin: 0 auto; padding: 0 24px; }
+  .hero { padding: 80px 0 60px; border-bottom: 1px solid var(--border); background: linear-gradient(180deg, #0f1219 0%, var(--bg) 100%); }
+  .hero-module { font-size: 11px; letter-spacing: 4px; text-transform: uppercase; color: var(--accent); margin-bottom: 16px; font-weight: 600; }
+  .hero h1 { font-size: clamp(28px, 5vw, 42px); font-weight: 800; line-height: 1.3; letter-spacing: -0.5px; margin-bottom: 12px; }
+  .hero h1 em { font-style: normal; color: var(--orange); }
+  .hero-sub { font-size: 16px; color: var(--text2); max-width: 560px; }
+  .hero-meta { margin-top: 32px; display: flex; gap: 24px; flex-wrap: wrap; font-size: 12px; color: var(--text3); }
+  section { padding: 56px 0; border-bottom: 1px solid var(--border); }
+  section:last-of-type { border-bottom: none; }
+  .section-label { font-size: 11px; letter-spacing: 3px; text-transform: uppercase; color: var(--accent); margin-bottom: 20px; font-weight: 600; }
+  h2 { font-size: 22px; font-weight: 700; margin-bottom: 16px; letter-spacing: -0.3px; line-height: 1.4; }
+  p { color: var(--text2); margin-bottom: 16px; }
+  p strong { color: var(--text); font-weight: 600; }
+  blockquote { border-left: 3px solid var(--accent); padding: 16px 20px; margin: 24px 0; background: var(--surface); border-radius: 0 8px 8px 0; }
+  blockquote p { font-size: 14px; color: var(--text); margin: 0; font-style: italic; }
+  blockquote cite { display: block; font-size: 12px; color: var(--text3); margin-top: 8px; font-style: normal; }
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; margin-bottom: 16px; overflow: hidden; }
+  .card:hover { border-color: var(--text3); }
+  .card-header { padding: 20px 24px; cursor: pointer; display: flex; align-items: center; gap: 16px; user-select: none; }
+  .card-header:hover { background: var(--surface2); }
+  .card-letter { width: 44px; height: 44px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 20px; font-weight: 800; color: var(--bg); flex-shrink: 0; }
+  .card-header-text h3 { font-size: 16px; font-weight: 700; margin-bottom: 2px; }
+  .card-header-text span { font-size: 13px; color: var(--text2); }
+  .card-toggle { margin-left: auto; font-size: 20px; color: var(--text3); transition: transform 0.3s; flex-shrink: 0; }
+  .card.open .card-toggle { transform: rotate(45deg); }
+  .card-body { max-height: 0; overflow: hidden; transition: max-height 0.4s ease; }
+  .card.open .card-body { max-height: 3000px; }
+  .card-content { padding: 0 24px 24px; }
+  .card-content h4 { font-size: 13px; font-weight: 700; color: var(--text); letter-spacing: 1px; text-transform: uppercase; margin: 20px 0 10px; padding-top: 16px; border-top: 1px solid var(--border); }
+  .card-content h4:first-child { border-top: none; padding-top: 0; margin-top: 0; }
+  .card-content ul { list-style: none; padding: 0; }
+  .card-content li { padding: 6px 0 6px 20px; color: var(--text2); font-size: 14px; position: relative; }
+  .card-content li::before { content: ""; position: absolute; left: 0; top: 14px; width: 6px; height: 6px; border-radius: 50%; background: var(--orange); }
+  .jp-box { background: var(--surface2); border-left: 3px solid var(--s3); border-radius: 0 8px 8px 0; padding: 16px 20px; margin: 16px 0; }
+  .jp-box .jp-label { font-size: 11px; font-weight: 700; color: var(--s3); letter-spacing: 1px; margin-bottom: 6px; }
+  .jp-box p { margin: 0; font-size: 14px; }
+  .warn-box { background: var(--surface2); border-left: 3px solid var(--s4); border-radius: 0 8px 8px 0; padding: 16px 20px; margin: 20px 0; }
+  .warn-box p { margin: 0; font-size: 14px; }
+  .compare { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 24px 0; }
+  @media (max-width: 600px) { .compare { grid-template-columns: 1fr; } }
+  .compare-item { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 20px; }
+  .compare-item h4 { font-size: 13px; font-weight: 700; margin-bottom: 8px; border: none; padding: 0; letter-spacing: 1px; }
+  .compare-item p { font-size: 13px; margin: 0; }
+  .rule-list { margin: 24px 0; }
+  .rule { display: flex; gap: 16px; padding: 16px 0; border-bottom: 1px solid var(--border); align-items: flex-start; }
+  .rule:last-child { border-bottom: none; }
+  .rule-num { width: 32px; height: 32px; border-radius: 8px; background: var(--accent); color: var(--bg); display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 800; flex-shrink: 0; }
+  .rule-text { font-size: 14px; color: var(--text2); }
+  .rule-text strong { color: var(--text); }
+  .checklist { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 24px; margin: 24px 0; }
+  .checklist h3 { font-size: 14px; font-weight: 700; margin-bottom: 16px; letter-spacing: 1px; }
+  .check-item { display: flex; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--border); font-size: 14px; color: var(--text2); cursor: pointer; }
+  .check-item:last-child { border-bottom: none; }
+  .check-item input[type="checkbox"] { width: 18px; height: 18px; accent-color: var(--s2); cursor: pointer; }
+  .check-item:has(input:checked) { color: var(--text3); text-decoration: line-through; }
+  .bridge { background: linear-gradient(135deg, var(--surface) 0%, var(--surface2) 100%); border: 1px solid var(--border); border-radius: 12px; padding: 32px; margin: 24px 0; }
+  .bridge h3 { font-size: 16px; margin-bottom: 12px; }
+  .bridge p { font-size: 14px; }
+  footer { padding: 40px 0; text-align: center; font-size: 12px; color: var(--text3); border-top: 1px solid var(--border); }
+  footer a { color: var(--accent); text-decoration: none; }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="container">
+    <div class="hero-module">Module 03 / 08</div>
+    <h1>CAN SLIM<br><em>ファンダメンタルの読み方</em></h1>
+    <p class="hero-sub">William O'Neilが半世紀のデータから抽出した7つの基準。<br>「何を買うか」の判断にファンダメンタルの軸を加える。</p>
+    <div class="hero-meta">
+      <span>📖 William J. O'Neil</span>
+      <span>📕 How to Make Money in Stocks (初版1988, 第4版2009)</span>
+      <span>⏱ 読了20分</span>
+    </div>
+  </div>
+</header>
+
+<!-- Why CAN SLIM -->
+<section>
+  <div class="container">
+    <div class="section-label">Context</div>
+    <h2>なぜCAN SLIMを学ぶのか</h2>
+    <p>Module 1（Stage Analysis）で「いつ買えるか」を学び、Module 2（SEPA/VCP）で「どこで買うか」を学びました。CAN SLIMは<strong>「何を買うか」——銘柄の質をどう評価するか</strong>のフレームワークです。</p>
+    <p>O'Neilは1953年から2001年までの米国株のウィナー600銘柄を分析し、大幅上昇する前にこれらの銘柄が共通して持っていた特徴を7つの基準にまとめました。MinerviniはO'Neilの弟子筋にあたり、SEPAの「E（Earnings）」はCAN SLIMの体系から強い影響を受けています。</p>
+    <blockquote>
+      <p>ゲーム全体の少なくとも50%は、相場全体の方向性だ。</p>
+      <cite>— William O'Neil</cite>
+    </blockquote>
+    <p>この一文が示すように、O'Neilは個別銘柄のファンダメンタルだけでなく、<strong>市場全体の方向性（M）を最重要視</strong>しています。CAN SLIMの7文字のうち最後のMが最も大切だというのは、一見すると矛盾に見えますが、これが彼の核心的な教えです。</p>
+  </div>
+</section>
+
+<!-- 7 Criteria -->
+<section>
+  <div class="container">
+    <div class="section-label">The Seven Criteria</div>
+    <h2>CAN SLIMの7つの基準</h2>
+    <p>各文字をクリックして詳細を展開してください。各基準の原則と、日本株で適用する際の注意点を解説します。</p>
+
+    <!-- C -->
+    <div class="card" onclick="this.classList.toggle('open')">
+      <div class="card-header">
+        <div class="card-letter" style="background:var(--orange)">C</div>
+        <div class="card-header-text">
+          <h3>Current Quarterly Earnings</h3>
+          <span>当期四半期のEPS（1株当たり利益）</span>
+        </div>
+        <div class="card-toggle">+</div>
+      </div>
+      <div class="card-body"><div class="card-content">
+        <h4>原則</h4>
+        <ul>
+          <li>直近四半期のEPSが<strong>前年同期比で最低25%以上</strong>増加していること</li>
+          <li>40〜100%以上の成長であればさらに良い</li>
+          <li>売上高も同時に<strong>前年同期比25%以上</strong>成長、または直近3四半期で加速していること</li>
+          <li>EPS成長率が2四半期連続で大幅に減速した銘柄は除外</li>
+        </ul>
+        <h4>なぜ重要か</h4>
+        <ul>
+          <li>株価を動かすのは最終的に業績。足元の四半期決算が強い企業は、市場の関心と資金を集める</li>
+          <li>EPSだけでなく売上も見る理由は、コスト削減だけでEPSを伸ばしている企業を排除するため</li>
+        </ul>
+        <div class="jp-box">
+          <div class="jp-label">🇯🇵 日本株での適用</div>
+          <p>日本企業の決算短信で四半期EPSを確認できるが、<strong>株式分割がEPSの遡及調整に反映されないケースがある</strong>。分割銘柄は表面上EPSが急落して見える。対策として、EPSの代わりに<strong>営業利益（前年同期比）</strong>で判定する方法が実用的。営業利益は株式分割の影響を受けない。</p>
+        </div>
+      </div></div>
+    </div>
+
+    <!-- A -->
+    <div class="card" onclick="this.classList.toggle('open')">
+      <div class="card-header">
+        <div class="card-letter" style="background:var(--orange)">A</div>
+        <div class="card-header-text">
+          <h3>Annual Earnings Growth</h3>
+          <span>年間EPS成長率</span>
+        </div>
+        <div class="card-toggle">+</div>
+      </div>
+      <div class="card-body"><div class="card-content">
+        <h4>原則</h4>
+        <ul>
+          <li>過去5年間で<strong>年間EPSが毎年増加</strong>していること</li>
+          <li>年平均成長率（CAGR）25%以上が望ましい</li>
+          <li>直近12ヶ月のEPSが直近通期のEPS以上であること（トレンドが続いている確認）</li>
+          <li>ROE（自己資本利益率）は<strong>17%以上</strong>が基準</li>
+        </ul>
+        <h4>CとAの関係</h4>
+        <ul>
+          <li>Cは「足元が強いか」、Aは「長期的に成長してきたか」。両方が揃って初めて候補になる</li>
+          <li>一時的なEPSの急増（特別利益等）に騙されないために、Aの長期視点が必要</li>
+        </ul>
+        <div class="jp-box">
+          <div class="jp-label">🇯🇵 日本株での適用</div>
+          <p>日本株の平均ROEは約10%で、米国（約18%）より低い。ROE基準を17%で適用すると候補が極端に少なくなる場合は、<strong>12〜15%</strong>に緩和して日本市場の実情に合わせるのも一案。ただしROEの水準を下げる場合、他の基準はより厳格に適用すること。</p>
+        </div>
+      </div></div>
+    </div>
+
+    <!-- N -->
+    <div class="card" onclick="this.classList.toggle('open')">
+      <div class="card-header">
+        <div class="card-letter" style="background:var(--orange)">N</div>
+        <div class="card-header-text">
+          <h3>New Products, Management, Highs</h3>
+          <span>「新しさ」——新製品・新経営陣・新高値</span>
+        </div>
+        <div class="card-toggle">+</div>
+      </div>
+      <div class="card-body"><div class="card-content">
+        <h4>原則</h4>
+        <ul>
+          <li>大きく上昇する銘柄には必ず<strong>何かの「新しさ」</strong>がある——新製品、新サービス、新経営陣、業界の構造変化</li>
+          <li>そして最も重要なのは、<strong>株価が新高値を更新しているタイミングで買う</strong>こと</li>
+          <li>安いから買うのではなく、高いから買う。底値圏の株を拾うのはCAN SLIMの正反対</li>
+        </ul>
+        <h4>O'Neilの逆説</h4>
+        <ul>
+          <li>「高すぎてリスクが高そうに見える銘柄ほど、さらに値上がりする」</li>
+          <li>「安くて割安に見える銘柄ほど、さらに値下がりする」</li>
+          <li>これはModule 1のStage Analysisと完全に整合する。Stage 2（上昇中）で買え、Stage 4（下落中）は触るな</li>
+        </ul>
+      </div></div>
+    </div>
+
+    <!-- S -->
+    <div class="card" onclick="this.classList.toggle('open')">
+      <div class="card-header">
+        <div class="card-letter" style="background:var(--orange)">S</div>
+        <div class="card-header-text">
+          <h3>Supply and Demand</h3>
+          <span>需給——発行済株式数と出来高</span>
+        </div>
+        <div class="card-toggle">+</div>
+      </div>
+      <div class="card-body"><div class="card-content">
+        <h4>原則</h4>
+        <ul>
+          <li><strong>発行済株式数が少なめ</strong>の銘柄のほうが、需要増加時に株価が大きく動く</li>
+          <li>大型株より中小型株のほうが値動きが軽い。ただし流動性とのバランスは必要</li>
+          <li>株価上昇時に<strong>出来高が増加</strong>し、下落時に出来高が減少するパターンを確認する</li>
+          <li>直近2〜3年で<strong>負債比率が減少</strong>している企業は加点要素</li>
+        </ul>
+        <div class="jp-box">
+          <div class="jp-label">🇯🇵 日本株での適用</div>
+          <p>63万円の資本で100株単位の取引をする場合、株価3,000円以下の銘柄が中心になる。中小型株が自然とフィルターされるため、S（需給）の条件は比較的満たしやすい。ただし出来高が極端に少ない銘柄は約定しにくいので、<strong>1日平均出来高5万株以上</strong>を最低ラインとする。</p>
+        </div>
+      </div></div>
+    </div>
+
+    <!-- L -->
+    <div class="card" onclick="this.classList.toggle('open')">
+      <div class="card-header">
+        <div class="card-letter" style="background:var(--orange)">L</div>
+        <div class="card-header-text">
+          <h3>Leader or Laggard</h3>
+          <span>業界のリーダーか、出遅れか</span>
+        </div>
+        <div class="card-toggle">+</div>
+      </div>
+      <div class="card-body"><div class="card-content">
+        <h4>原則</h4>
+        <ul>
+          <li>業界内の<strong>上位1〜3銘柄</strong>に集中する。「二番手」「出遅れ」は買わない</li>
+          <li>リーダーの定義は規模やブランド力ではなく、<strong>EPS成長率・売上成長率・株価のモメンタム（RS）が業界最強</strong>であること</li>
+          <li>RS（相対強度）が<strong>70以上</strong>、理想は80〜90台</li>
+          <li>「リーダーが高すぎるから二番手を買う」は典型的な失敗パターン</li>
+        </ul>
+        <h4>Minerviniとの重複</h4>
+        <ul>
+          <li>Module 2のトレンドテンプレート8番目の条件「RS 70以上」はまさにこのLに対応</li>
+          <li>両者とも「弱い銘柄を無視する」という同じ原則に立っている</li>
+        </ul>
+      </div></div>
+    </div>
+
+    <!-- I -->
+    <div class="card" onclick="this.classList.toggle('open')">
+      <div class="card-header">
+        <div class="card-letter" style="background:var(--orange)">I</div>
+        <div class="card-header-text">
+          <h3>Institutional Sponsorship</h3>
+          <span>機関投資家の保有</span>
+        </div>
+        <div class="card-toggle">+</div>
+      </div>
+      <div class="card-body"><div class="card-content">
+        <h4>原則</h4>
+        <ul>
+          <li>最低<strong>3〜10の機関投資家</strong>が保有していること</li>
+          <li>機関投資家がゼロの銘柄は流動性が低く、上昇力も弱い</li>
+          <li>ただし機関投資家の保有比率が<strong>高すぎる</strong>のも問題。悪材料で一斉に売られるリスクがある</li>
+          <li>直近の四半期で機関投資家の保有数が<strong>増加傾向</strong>にあるかを確認する</li>
+        </ul>
+        <div class="jp-box">
+          <div class="jp-label">🇯🇵 日本株での適用</div>
+          <p>日本株では四季報や有価証券報告書の「大株主の状況」で確認できる。信託口（信託銀行名義）や外国法人の保有があれば、機関投資家が入っている証拠。<strong>EDINET</strong>の大量保有報告書（5%ルール）も参考になる。中小型株では機関投資家が少ないのが普通なので、「ゼロでないこと」を最低条件とし、増加傾向を重視する。</p>
+        </div>
+      </div></div>
+    </div>
+
+    <!-- M -->
+    <div class="card open" onclick="this.classList.toggle('open')">
+      <div class="card-header">
+        <div class="card-letter" style="background:var(--s4)">M</div>
+        <div class="card-header-text">
+          <h3>Market Direction</h3>
+          <span>市場全体の方向性——最も重要な要素</span>
+        </div>
+        <div class="card-toggle">+</div>
+      </div>
+      <div class="card-body"><div class="card-content">
+        <h4>原則</h4>
+        <ul>
+          <li>O'Neilは「ゲーム全体の50%以上が市場全体の方向性」と断言している</li>
+          <li>どれだけ優れた銘柄でも、<strong>市場全体が下落基調なら逆らえない</strong>。3/4の銘柄は市場の方向に引きずられる</li>
+          <li>市場が上昇トレンドのときだけ積極的に買い、下落トレンドでは現金化して待つ</li>
+          <li>判定方法：主要指数（S&P 500 / 日経平均 / TOPIX）の日足チャートと出来高パターンを見る</li>
+        </ul>
+        <h4>「ディストリビューション・デイ」の概念</h4>
+        <ul>
+          <li>主要指数が<strong>出来高の増加を伴って−0.2%以上下落</strong>した日を「ディストリビューション・デイ」と呼ぶ</li>
+          <li>4〜5週間で4〜5日のディストリビューション・デイが発生したら、市場のトレンド転換を疑う</li>
+          <li>この時点で新規のエントリーを停止し、既存ポジションの利確を検討する</li>
+        </ul>
+        <div class="warn-box">
+          <p><strong>⚠ これが最も重要な教え：</strong>CAN SLIMの6文字（C, A, N, S, L, I）を完璧に満たしても、M（市場の方向性）が悪ければ買ってはいけない。地合いが悪いときに休めるかどうかが、生存率を決定的に左右する。</p>
+        </div>
+        <div class="jp-box">
+          <div class="jp-label">🇯🇵 日本株での適用</div>
+          <p>日経平均またはTOPIXの日足チャートで判定。200日移動平均線の上にあり、上向きなら上昇トレンド。加えて、ディストリビューション・デイのカウントを自分で記録する習慣をつける。これはトレードジャーナルに毎日1行追加するだけでできる。</p>
+        </div>
+      </div></div>
+    </div>
+  </div>
+</section>
+
+<!-- Minervini vs O'Neil -->
+<section>
+  <div class="container">
+    <div class="section-label">Comparison</div>
+    <h2>MinerviniとO'Neilの比較</h2>
+    <p>両者の手法は多くの部分で重なります。違いは力点の置き方です。</p>
+    <div class="compare">
+      <div class="compare-item">
+        <h4 style="color:var(--cyan)">MINERVINI (SEPA)</h4>
+        <p><strong>強み：</strong>エントリータイミングの精度。VCPによるタイトなストップ設定。リスク管理が厳格。</p>
+        <p style="margin-top:8px"><strong>弱み：</strong>ファンダメンタル分析の体系はO'Neilほど詳細でない。</p>
+      </div>
+      <div class="compare-item">
+        <h4 style="color:var(--orange)">O'NEIL (CAN SLIM)</h4>
+        <p><strong>強み：</strong>ファンダメンタルの選定基準が体系的。市場全体の方向性判定。600銘柄のデータに裏付けされている。</p>
+        <p style="margin-top:8px"><strong>弱み：</strong>エントリーポイントの定義がMinerviniほど精密でない。ストップルールも緩め。</p>
+      </div>
+    </div>
+    <p><strong>組み合わせが最強。</strong>CAN SLIMでファンダメンタルをスクリーニングし、Minerviniのトレンドテンプレートで技術的に確認し、VCPでエントリーする。この3層フィルターが、個人投資家として取りうる最も堅実なアプローチのひとつです。</p>
+  </div>
+</section>
+
+<!-- Practical Flow -->
+<section>
+  <div class="container">
+    <div class="section-label">Workflow</div>
+    <h2>実践ワークフロー：3モジュールの統合</h2>
+    <p>Module 1〜3を統合すると、以下の手順で銘柄選定からエントリーまで進めます。</p>
+    <div class="rule-list">
+      <div class="rule"><div class="rule-num">1</div><div class="rule-text"><strong>M（市場全体）を確認。</strong>日経平均/TOPIXが上昇トレンドか？ディストリビューション・デイが溜まっていないか？→ NOなら現金で待つ。</div></div>
+      <div class="rule"><div class="rule-num">2</div><div class="rule-text"><strong>CAN SLIMでファンダを篩にかける。</strong>四半期EPS＋売上が25%以上成長、年間EPS増加傾向、RS上位、機関投資家保有あり。</div></div>
+      <div class="rule"><div class="rule-num">3</div><div class="rule-text"><strong>Minerviniのトレンドテンプレートを適用。</strong>8項目すべて合格する銘柄だけ残す。ここで候補が5〜20銘柄に絞られる。</div></div>
+      <div class="rule"><div class="rule-num">4</div><div class="rule-text"><strong>VCPを探す。</strong>残った候補のチャートを見て、ボラティリティの収縮パターンが形成されている銘柄を特定する。</div></div>
+      <div class="rule"><div class="rule-num">5</div><div class="rule-text"><strong>ブレイクアウトでエントリー。</strong>ピボット突破＋出来高急増。ストップロスを設定。トレードジャーナルに記録。</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- Bridge to Module 4 -->
+<section>
+  <div class="container">
+    <div class="section-label">Next</div>
+    <h2>Module 4への橋——リスク管理</h2>
+    <div class="bridge">
+      <h3>ここまでで「何を、いつ、どこで買うか」の枠組みが揃った</h3>
+      <p>Module 1：Stage 2の株だけ買う（Weinstein）<br>Module 2：VCPブレイクアウトで買う（Minervini）<br>Module 3：ファンダメンタルが強く、市場が味方している株を買う（O'Neil）</p>
+      <p style="margin-top:12px">次のModule 4では、<strong>「どれだけ買うか」「いくらまで損していいか」</strong>を数学的に設計します。Kelly Criterion、R倍数、63万円の資本を最大限に活かすポジションサイジング。銘柄選びと同じくらい、資金管理がトレードの成否を分ける要素です。</p>
+    </div>
+  </div>
+</section>
+
+<!-- Checklist -->
+<section>
+  <div class="container">
+    <div class="section-label">Self Check</div>
+    <h2>理解度チェックリスト</h2>
+    <div class="checklist">
+      <h3>☑ MODULE 3 COMPLETION</h3>
+      <label class="check-item"><input type="checkbox"> CAN SLIMの7文字をすべて説明できる</label>
+      <label class="check-item"><input type="checkbox"> C（四半期EPS）の基準値（25%以上）と売上成長の重要性を述べられる</label>
+      <label class="check-item"><input type="checkbox"> 日本株でEPSの代わりに営業利益を使う理由を説明できる</label>
+      <label class="check-item"><input type="checkbox"> M（市場方向性）がなぜ最も重要な要素かを説明できる</label>
+      <label class="check-item"><input type="checkbox"> ディストリビューション・デイの定義と意味を述べられる</label>
+      <label class="check-item"><input type="checkbox"> MinerviniとO'Neilの手法の共通点と相違点を説明できる</label>
+      <label class="check-item"><input type="checkbox"> Module 1〜3を統合した5ステップの実践ワークフローを述べられる</label>
+      <label class="check-item"><input type="checkbox"> 「リーダーが高すぎるから二番手を買う」がなぜ失敗パターンかを説明できる</label>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <p>Swing Trading Curriculum — Module 03 / 08</p>
+    <p style="margin-top:8px">原典：William J. O'Neil『How to Make Money in Stocks』(第4版, 2009)</p>
+    <p style="margin-top:4px">本教材は投資助言ではありません。投資判断はご自身の責任で行ってください。</p>
+    <p style="margin-top:16px"><a href="module-02-sepa-vcp.html">← Module 02: SEPA / VCP</a>　｜　<a href="module-04-risk-management.html">Module 04: リスク管理 →</a></p>
+  </div>
+</footer>
+
+</body>
+</html>
