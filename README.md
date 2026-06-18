@@ -12,7 +12,7 @@
 | 04 | [リスク管理とポジションサイジング](modules/module-04-risk-management.html) | ✅ |
 | 05 | [トレーディング心理学](modules/module-05-psychology.html) | ✅ |
 | 06 | [チャートパターンと出来高分析](modules/module-06-chart-patterns.html) | ✅ |
-| 07 | セクターローテーションと市場全体の読み方 | 🔲 |
+| 07 | [セクターローテーションと市場全体の読み方](modules/module-07-sector-rotation.html) | ✅ |
 | 08 | 日本株固有の構造 | 🔲 |
 
 ## 設計思想
