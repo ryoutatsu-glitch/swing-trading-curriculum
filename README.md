@@ -10,7 +10,7 @@
 | 02 | [SEPA / Trend Template / VCP (Mark Minervini)](modules/module-02-sepa-vcp.html) | ✅ |
 | 03 | [CAN SLIM 概論 (William O'Neil)](modules/module-03-canslim.html) | ✅ |
 | 04 | [リスク管理とポジションサイジング](modules/module-04-risk-management.html) | ✅ |
-| 05 | トレーディング心理学 | 🔲 |
+| 05 | [トレーディング心理学](modules/module-05-psychology.html) | ✅ |
 | 06 | チャートパターンと出来高分析 | 🔲 |
 | 07 | セクターローテーションと市場全体の読み方 | 🔲 |
 | 08 | 日本株固有の構造 | 🔲 |
