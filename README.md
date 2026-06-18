@@ -13,7 +13,7 @@
 | 05 | [トレーディング心理学](modules/module-05-psychology.html) | ✅ |
 | 06 | [チャートパターンと出来高分析](modules/module-06-chart-patterns.html) | ✅ |
 | 07 | [セクターローテーションと市場全体の読み方](modules/module-07-sector-rotation.html) | ✅ |
-| 08 | 日本株固有の構造 | 🔲 |
+| 08 | [日本株固有の構造](modules/module-08-japan-specific.html) | ✅ |
 
 ## 設計思想
 
@@ -26,6 +26,13 @@
 各モジュールは単体のHTMLファイルです。ブラウザで開いてそのまま学習できます。
 
 GitHub Pages: https://ryoutatsu-glitch.github.io/swing-trading-curriculum/modules/
+
+## Next Steps
+
+1. トレードジャーナルを構築する
+2. 楽天証券の初期設定を完了する
+3. 63万円で最初のトレードを実行する
+4. 最初の20トレードの目標：ルール遵守率80%以上
 
 ## ⚠ Disclaimer
 
