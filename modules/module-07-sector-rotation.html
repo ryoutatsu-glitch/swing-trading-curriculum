@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Module 07 — セクターローテーションと市場全体の読み方 | Swing Trading Curriculum</title>
+<style>
+  :root {
+    --bg: #0a0c10; --surface: #12151e; --surface2: #1a1f2e;
+    --border: #1e293b; --text: #e2e8f0; --text2: #94a3b8; --text3: #64748b;
+    --s2: #22c55e; --s4: #ef4444; --s3: #eab308;
+    --accent: #818cf8; --cyan: #06b6d4; --amber: #f59e0b;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { background: var(--bg); color: var(--text); font-family: "Hiragino Kaku Gothic ProN","Noto Sans JP","Yu Gothic",sans-serif; line-height: 1.8; font-size: 15px; -webkit-font-smoothing: antialiased; }
+  .container { max-width: 760px; margin: 0 auto; padding: 0 24px; }
+  .hero { padding: 80px 0 60px; border-bottom: 1px solid var(--border); background: linear-gradient(180deg, #0f1219 0%, var(--bg) 100%); }
+  .hero-module { font-size: 11px; letter-spacing: 4px; text-transform: uppercase; color: var(--accent); margin-bottom: 16px; font-weight: 600; }
+  .hero h1 { font-size: clamp(28px, 5vw, 42px); font-weight: 800; line-height: 1.3; letter-spacing: -0.5px; margin-bottom: 12px; }
+  .hero h1 em { font-style: normal; color: var(--amber); }
+  .hero-sub { font-size: 16px; color: var(--text2); max-width: 560px; }
+  .hero-meta { margin-top: 32px; display: flex; gap: 24px; flex-wrap: wrap; font-size: 12px; color: var(--text3); }
+  section { padding: 56px 0; border-bottom: 1px solid var(--border); }
+  section:last-of-type { border-bottom: none; }
+  .section-label { font-size: 11px; letter-spacing: 3px; text-transform: uppercase; color: var(--accent); margin-bottom: 20px; font-weight: 600; }
+  h2 { font-size: 22px; font-weight: 700; margin-bottom: 16px; letter-spacing: -0.3px; }
+  p { color: var(--text2); margin-bottom: 16px; }
+  p strong { color: var(--text); font-weight: 600; }
+  blockquote { border-left: 3px solid var(--accent); padding: 16px 20px; margin: 24px 0; background: var(--surface); border-radius: 0 8px 8px 0; }
+  blockquote p { font-size: 14px; color: var(--text); margin: 0; font-style: italic; }
+  blockquote cite { display: block; font-size: 12px; color: var(--text3); margin-top: 8px; font-style: normal; }
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; margin-bottom: 16px; overflow: hidden; }
+  .card:hover { border-color: var(--text3); }
+  .card-header { padding: 20px 24px; cursor: pointer; display: flex; align-items: center; gap: 16px; user-select: none; }
+  .card-header:hover { background: var(--surface2); }
+  .card-num { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 800; color: var(--bg); flex-shrink: 0; }
+  .card-header-text h3 { font-size: 16px; font-weight: 700; margin-bottom: 2px; }
+  .card-header-text span { font-size: 13px; color: var(--text2); }
+  .card-toggle { margin-left: auto; font-size: 20px; color: var(--text3); transition: transform 0.3s; flex-shrink: 0; }
+  .card.open .card-toggle { transform: rotate(45deg); }
+  .card-body { max-height: 0; overflow: hidden; transition: max-height 0.4s ease; }
+  .card.open .card-body { max-height: 4000px; }
+  .card-content { padding: 0 24px 24px; }
+  .card-content h4 { font-size: 13px; font-weight: 700; color: var(--text); letter-spacing: 1px; text-transform: uppercase; margin: 20px 0 10px; padding-top: 16px; border-top: 1px solid var(--border); }
+  .card-content h4:first-child { border-top: none; padding-top: 0; margin-top: 0; }
+  .card-content ul { list-style: none; padding: 0; }
+  .card-content li { padding: 6px 0 6px 20px; color: var(--text2); font-size: 14px; position: relative; }
+  .card-content li::before { content: ""; position: absolute; left: 0; top: 14px; width: 6px; height: 6px; border-radius: 50%; background: var(--amber); }
+  .diagram-wrap { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 28px 20px; margin: 24px 0; overflow-x: auto; }
+  .diagram-wrap svg { display: block; margin: 0 auto; }
+  .diagram-caption { text-align: center; font-size: 12px; color: var(--text3); margin-top: 14px; }
+  .phase-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; margin: 24px 0; }
+  .phase-item { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 16px; }
+  .phase-item .phase-name { font-size: 13px; font-weight: 700; margin-bottom: 6px; }
+  .phase-item .phase-sectors { font-size: 12px; color: var(--text2); }
+  .phase-item .phase-label { font-size: 10px; color: var(--text3); letter-spacing: 0.5px; text-transform: uppercase; margin-bottom: 4px; }
+  .warn-box { background: var(--surface2); border-left: 3px solid var(--s4); border-radius: 0 8px 8px 0; padding: 16px 20px; margin: 20px 0; }
+  .warn-box p { margin: 0; font-size: 14px; }
+  .insight-box { background: var(--surface2); border-left: 3px solid var(--s2); border-radius: 0 8px 8px 0; padding: 16px 20px; margin: 20px 0; }
+  .insight-box p { margin: 0; font-size: 14px; }
+  .jp-box { background: var(--surface2); border-left: 3px solid var(--s3); border-radius: 0 8px 8px 0; padding: 16px 20px; margin: 16px 0; }
+  .jp-box .jp-label { font-size: 11px; font-weight: 700; color: var(--s3); letter-spacing: 1px; margin-bottom: 6px; }
+  .jp-box p { margin: 0; font-size: 14px; }
+  .rule-list { margin: 24px 0; }
+  .rule { display: flex; gap: 16px; padding: 16px 0; border-bottom: 1px solid var(--border); align-items: flex-start; }
+  .rule:last-child { border-bottom: none; }
+  .rule-num { width: 32px; height: 32px; border-radius: 8px; background: var(--accent); color: var(--bg); display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 800; flex-shrink: 0; }
+  .rule-text { font-size: 14px; color: var(--text2); }
+  .rule-text strong { color: var(--text); }
+  .checklist { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 24px; margin: 24px 0; }
+  .checklist h3 { font-size: 14px; font-weight: 700; margin-bottom: 16px; letter-spacing: 1px; }
+  .check-item { display: flex; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--border); font-size: 14px; color: var(--text2); cursor: pointer; }
+  .check-item:last-child { border-bottom: none; }
+  .check-item input[type="checkbox"] { width: 18px; height: 18px; accent-color: var(--s2); cursor: pointer; }
+  .check-item:has(input:checked) { color: var(--text3); text-decoration: line-through; }
+  .bridge { background: linear-gradient(135deg, var(--surface) 0%, var(--surface2) 100%); border: 1px solid var(--border); border-radius: 12px; padding: 32px; margin: 24px 0; }
+  .bridge h3 { font-size: 16px; margin-bottom: 12px; }
+  .bridge p { font-size: 14px; }
+  footer { padding: 40px 0; text-align: center; font-size: 12px; color: var(--text3); border-top: 1px solid var(--border); }
+  footer a { color: var(--accent); text-decoration: none; }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="container">
+    <div class="hero-module">Module 07 / 08</div>
+    <h1>セクターローテーションと<br><em>市場全体の読み方</em></h1>
+    <p class="hero-sub">個別銘柄を見る前に、どのセクターに資金が流れているかを把握する。<br>風を背中に受けて戦う。</p>
+    <div class="hero-meta">
+      <span>📖 Sam Stovall — Sector Rotation Model</span>
+      <span>📖 O'Neil — Market Direction (M)</span>
+      <span>⏱ 読了15分</span>
+    </div>
+  </div>
+</header>
+
+<!-- Why Sector Matters -->
+<section>
+  <div class="container">
+    <div class="section-label">Top-Down</div>
+    <h2>なぜセクターを見るのか</h2>
+    <p>Module 3のCAN SLIMで「M（市場全体の方向性）がゲームの50%を決める」と学びました。セクターローテーションはその「M」をさらに解像度を上げて見るための技術です。</p>
+    <p>市場全体が上昇していても、すべてのセクターが均等に上がるわけではありません。<strong>資金はセクター間を循環的に移動</strong>しており、あるセクターに資金が集中しているとき、別のセクターからは資金が抜けています。</p>
+    <p>強いセクターの中のリーダー銘柄でブレイクアウトを買えば、「風を背中に受けて」いる状態。弱いセクターでどんなに良いパターンを見つけても、逆風の中で戦うことになります。</p>
+    <blockquote>
+      <p>強いセクターの中の最も強い銘柄を買え。弱いセクターの「割安株」は買うな。</p>
+      <cite>— CAN SLIMのL原則の拡張</cite>
+    </blockquote>
+  </div>
+</section>
+
+<!-- Rotation Cycle -->
+<section>
+  <div class="container">
+    <div class="section-label">The Cycle</div>
+    <h2>セクターローテーションの4局面</h2>
+    <p>景気サイクルの各局面で、リーダーとなるセクターが変わります。<strong>株式市場は景気に6〜9ヶ月先行する</strong>ため、景気の底入れより前に景気敏感セクターが動き始めます。</p>
+
+    <div class="diagram-wrap">
+      <svg viewBox="0 0 650 280" xmlns="http://www.w3.org/2000/svg" width="100%">
+        <text x="325" y="18" fill="#64748b" font-size="10" text-anchor="middle" letter-spacing="2" font-weight="600">SECTOR ROTATION MODEL</text>
+        <!-- Economic cycle (blue) -->
+        <path d="M 50,180 Q 120,210 190,200 T 325,220 T 460,200 T 530,180 T 600,160" fill="none" stroke="#3b82f6" stroke-width="2" opacity="0.4"/>
+        <text x="605" y="158" fill="#3b82f6" font-size="8" opacity="0.6">景気</text>
+        <!-- Market cycle (orange, leads) -->
+        <path d="M 50,190 Q 100,170 150,140 T 240,100 T 325,90 T 410,100 T 480,140 T 550,180 T 600,190" fill="none" stroke="#f59e0b" stroke-width="2.5"/>
+        <text x="605" y="193" fill="#f59e0b" font-size="8" font-weight="600">株式市場</text>
+        <!-- Center line -->
+        <line x1="50" y1="180" x2="600" y2="180" stroke="#1e293b" stroke-width="1"/>
+        <!-- Phase dividers -->
+        <line x1="190" y1="40" x2="190" y2="260" stroke="#1e293b" stroke-width="1" stroke-dasharray="4,4"/>
+        <line x1="325" y1="40" x2="325" y2="260" stroke="#1e293b" stroke-width="1" stroke-dasharray="4,4"/>
+        <line x1="480" y1="40" x2="480" y2="260" stroke="#1e293b" stroke-width="1" stroke-dasharray="4,4"/>
+        <!-- Phase labels -->
+        <rect x="55" y="35" width="130" height="20" rx="4" fill="#22c55e" opacity="0.15"/>
+        <text x="120" y="49" fill="#22c55e" font-size="10" text-anchor="middle" font-weight="700">回復初期</text>
+        <rect x="195" y="35" width="125" height="20" rx="4" fill="#06b6d4" opacity="0.15"/>
+        <text x="257" y="49" fill="#06b6d4" font-size="10" text-anchor="middle" font-weight="700">拡大期</text>
+        <rect x="330" y="35" width="145" height="20" rx="4" fill="#f59e0b" opacity="0.15"/>
+        <text x="402" y="49" fill="#f59e0b" font-size="10" text-anchor="middle" font-weight="700">景気ピーク</text>
+        <rect x="485" y="35" width="110" height="20" rx="4" fill="#ef4444" opacity="0.15"/>
+        <text x="540" y="49" fill="#ef4444" font-size="10" text-anchor="middle" font-weight="700">後退期</text>
+        <!-- Leading sectors for each phase -->
+        <text x="120" y="72" fill="#22c55e" font-size="9" text-anchor="middle">テクノロジー</text>
+        <text x="120" y="84" fill="#22c55e" font-size="9" text-anchor="middle">消費財（裁量的）</text>
+        <text x="120" y="96" fill="#22c55e" font-size="9" text-anchor="middle">金融</text>
+        <text x="257" y="72" fill="#06b6d4" font-size="9" text-anchor="middle">資本財・工業</text>
+        <text x="257" y="84" fill="#06b6d4" font-size="9" text-anchor="middle">素材</text>
+        <text x="402" y="72" fill="#f59e0b" font-size="9" text-anchor="middle">エネルギー</text>
+        <text x="402" y="84" fill="#f59e0b" font-size="9" text-anchor="middle">素材</text>
+        <text x="540" y="72" fill="#ef4444" font-size="9" text-anchor="middle">ヘルスケア</text>
+        <text x="540" y="84" fill="#ef4444" font-size="9" text-anchor="middle">生活必需品</text>
+        <text x="540" y="96" fill="#ef4444" font-size="9" text-anchor="middle">公益事業</text>
+        <!-- Arrow showing market leads economy -->
+        <text x="325" y="245" fill="#94a3b8" font-size="9" text-anchor="middle">← 株式市場は景気に6〜9ヶ月先行する →</text>
+      </svg>
+      <div class="diagram-caption">橙線＝株式市場、青線＝景気サイクル。各局面でリーダーセクターが交代する。</div>
+    </div>
+
+    <div class="phase-grid">
+      <div class="phase-item" style="border-left: 3px solid var(--s2);">
+        <div class="phase-label">Phase 1</div>
+        <div class="phase-name" style="color:var(--s2)">回復初期</div>
+        <div class="phase-sectors">テクノロジー、消費財（裁量的）、金融。景気回復を先取りする成長セクターが最初に動く。</div>
+      </div>
+      <div class="phase-item" style="border-left: 3px solid var(--cyan);">
+        <div class="phase-label">Phase 2</div>
+        <div class="phase-name" style="color:var(--cyan)">拡大期</div>
+        <div class="phase-sectors">資本財・工業、素材。実体経済の回復が広がり、設備投資や生産が拡大するセクターに資金が流れる。</div>
+      </div>
+      <div class="phase-item" style="border-left: 3px solid var(--amber);">
+        <div class="phase-label">Phase 3</div>
+        <div class="phase-name" style="color:var(--amber)">景気ピーク</div>
+        <div class="phase-sectors">エネルギー、素材。商品価格と需要がピーク。市場の先行指標が先にリーダーシップ移行を始める。</div>
+      </div>
+      <div class="phase-item" style="border-left: 3px solid var(--s4);">
+        <div class="phase-label">Phase 4</div>
+        <div class="phase-name" style="color:var(--s4)">後退期</div>
+        <div class="phase-sectors">ヘルスケア、生活必需品、公益事業。景気に左右されないディフェンシブセクターが相対的に強い。</div>
+      </div>
+    </div>
+
+    <div class="jp-box">
+      <div class="jp-label">🇯🇵 日本市場のセクター</div>
+      <p>東証はTOPIX-17やTOPIX-33でセクター指数を提供しています。主要なセクターETFも上場しており、セクターの相対パフォーマンスを追跡できます。楽天証券のマーケットスピードIIでもセクター別の騰落率を確認可能です。</p>
+    </div>
+  </div>
+</section>
+
+<!-- Market Direction -->
+<section>
+  <div class="container">
+    <div class="section-label">Market Direction</div>
+    <h2>市場全体の方向性を判定する</h2>
+    <p>Module 3のCAN SLIMで学んだ「M」をより具体的なチェックリストに落とし込みます。</p>
+
+    <div class="card open" onclick="this.classList.toggle('open')">
+      <div class="card-header">
+        <div class="card-num" style="background:var(--s2)">↑</div>
+        <div class="card-header-text"><h3>上昇トレンドの確認</h3><span>積極的にエントリーしてよい環境</span></div>
+        <div class="card-toggle">+</div>
+      </div>
+      <div class="card-body"><div class="card-content">
+        <ul>
+          <li>日経平均/TOPIXが<strong>200日移動平均線の上</strong>にあり、200日線が上向き</li>
+          <li>50日線が200日線の上（ゴールデンクロス状態）</li>
+          <li>直近4〜5週間でディストリビューション・デイ（出来高増加を伴う−0.2%以上の下落）が3日以内</li>
+          <li>新高値銘柄数が新安値銘柄数を大幅に上回っている</li>
+        </ul>
+      </div></div>
+    </div>
+
+    <div class="card" onclick="this.classList.toggle('open')">
+      <div class="card-header">
+        <div class="card-num" style="background:var(--s3);color:var(--bg)">→</div>
+        <div class="card-header-text"><h3>警戒シグナル</h3><span>新規エントリーを控える、利確を検討</span></div>
+        <div class="card-toggle">+</div>
+      </div>
+      <div class="card-body"><div class="card-content">
+        <ul>
+          <li>4〜5週間で<strong>ディストリビューション・デイが4〜5日</strong>発生</li>
+          <li>リーダー銘柄がブレイクアウト後に失速するケースが増加</li>
+          <li>セクターリーダーシップがディフェンシブ（ヘルスケア・公益・必需品）に移行</li>
+          <li>新高値銘柄数が減少傾向</li>
+        </ul>
+      </div></div>
+    </div>
+
+    <div class="card" onclick="this.classList.toggle('open')">
+      <div class="card-header">
+        <div class="card-num" style="background:var(--s4)">↓</div>
+        <div class="card-header-text"><h3>下降トレンド／現金化</h3><span>ポジションをすべて手仕舞い、休む</span></div>
+        <div class="card-toggle">+</div>
+      </div>
+      <div class="card-body"><div class="card-content">
+        <ul>
+          <li>日経平均/TOPIXが<strong>200日移動平均線の下</strong>にあり、200日線が下向き</li>
+          <li>デッドクロス（50日線が200日線を下抜け）</li>
+          <li>ブレイクアウトが軒並み失敗する環境</li>
+          <li>新安値銘柄数が新高値銘柄数を上回る</li>
+          <li><strong>この環境で買ってはいけない。</strong>どんなに良いセットアップに見えても、市場の潮流に逆らえない</li>
+        </ul>
+      </div></div>
+    </div>
+  </div>
+</section>
+
+<!-- Practical Workflow -->
+<section>
+  <div class="container">
+    <div class="section-label">Workflow</div>
+    <h2>週次セクター分析のワークフロー</h2>
+    <p>毎週末に15分で完了する、セクター分析の実践手順です。</p>
+
+    <div class="rule-list">
+      <div class="rule"><div class="rule-num">1</div><div class="rule-text"><strong>市場全体の方向を確認。</strong>日経平均/TOPIXの週足チャートを開き、200日線との位置関係を見る。上昇トレンドが継続しているか。</div></div>
+      <div class="rule"><div class="rule-num">2</div><div class="rule-text"><strong>セクター別の週間騰落率をチェック。</strong>どのセクターが上昇をリードしているか、どのセクターが下落しているかを把握。過去1ヶ月・3ヶ月のパフォーマンスも確認し、持続的な強さがあるかを見る。</div></div>
+      <div class="rule"><div class="rule-num">3</div><div class="rule-text"><strong>リーダーセクターを2〜3つ特定。</strong>直近1ヶ月で相対パフォーマンスが上位のセクター。このセクターの中から銘柄を探す。</div></div>
+      <div class="rule"><div class="rule-num">4</div><div class="rule-text"><strong>リーダーセクター内でトレンドテンプレート通過銘柄を探す。</strong>Module 2の8項目フィルターを適用。セクターの追い風＋個別銘柄の強さ＝高確率のセットアップ。</div></div>
+      <div class="rule"><div class="rule-num">5</div><div class="rule-text"><strong>VCPやカップ&ハンドルのセットアップを確認。</strong>Module 6のパターンが形成されている銘柄をウォッチリストに入れ、ブレイクアウトを待つ。</div></div>
+    </div>
+
+    <div class="insight-box">
+      <p><strong>💡 このワークフローの意味：</strong>トップダウン（市場全体 → セクター → 個別銘柄）のアプローチにより、「良いパターンだが悪いセクター」という罠を避けられる。個別銘柄から入ると（ボトムアップ）、セクター全体の逆風に気づかないことがある。</p>
+    </div>
+  </div>
+</section>
+
+<!-- Relative Strength -->
+<section>
+  <div class="container">
+    <div class="section-label">Relative Strength</div>
+    <h2>相対強度——セクターと銘柄の強さを比較する</h2>
+    <p>「相対強度」とは、ある銘柄やセクターが市場全体と比較してどれだけ強いか（または弱いか）を示す指標です。</p>
+
+    <div class="card" onclick="this.classList.toggle('open')">
+      <div class="card-header">
+        <div class="card-num" style="background:var(--amber);color:var(--bg)">RS</div>
+        <div class="card-header-text"><h3>相対強度の実践的な計算方法</h3><span>日本株で使える代替指標</span></div>
+        <div class="card-toggle">+</div>
+      </div>
+      <div class="card-body"><div class="card-content">
+        <h4>セクターの相対強度</h4>
+        <ul>
+          <li>セクター指数のパフォーマンス ÷ TOPIXのパフォーマンス を期間別に計算</li>
+          <li>比率が上昇していれば、そのセクターはTOPIXをアウトパフォームしている</li>
+          <li>比率が下降していれば、アンダーパフォーム</li>
+        </ul>
+        <h4>個別銘柄の相対強度</h4>
+        <ul>
+          <li><strong>簡易法：</strong>52週高値からの距離で代用。52週高値に近い銘柄ほど相対強度が高い（Module 2トレンドテンプレート条件7に対応）</li>
+          <li><strong>計算法：</strong>銘柄の過去6ヶ月リターン ÷ TOPIXの過去6ヶ月リターン。1.0以上ならアウトパフォーム</li>
+          <li>楽天証券のマーケットスピードIIでは、チャート上にTOPIXの比較表示が可能</li>
+        </ul>
+        <h4>実務上のルール</h4>
+        <ul>
+          <li>セクターの相対強度が上位1/3に入っているセクターだけで銘柄を探す</li>
+          <li>銘柄の相対強度がセクター内で上位であること</li>
+          <li>市場全体が弱いときに相対強度が高い銘柄は、市場回復時に最初に動く可能性が高い</li>
+        </ul>
+      </div></div>
+    </div>
+  </div>
+</section>
+
+<!-- Bridge -->
+<section>
+  <div class="container">
+    <div class="section-label">Next</div>
+    <h2>Module 8への橋——日本株固有の構造</h2>
+    <div class="bridge">
+      <h3>ここまでのフレームワークは主に米国株の研究に基づいている</h3>
+      <p>Module 1〜7で学んだ原則（Stage Analysis、SEPA、CAN SLIM、リスク管理、心理学、チャートパターン、セクターローテーション）は、すべて米国市場のデータと実績に基づいています。</p>
+      <p style="margin-top:12px">最後のModule 8では、<strong>これらを日本株に適用するときに知っておくべき構造的な違い</strong>を学びます。決算サイクルの違い、信用取引の需給データ、株主優待の影響、値幅制限、単元株制度など、日本市場特有の要素が実際のトレードにどう影響するかを整理します。</p>
+    </div>
+  </div>
+</section>
+
+<!-- Checklist -->
+<section>
+  <div class="container">
+    <div class="section-label">Self Check</div>
+    <h2>理解度チェックリスト</h2>
+    <div class="checklist">
+      <h3>☑ MODULE 7 COMPLETION</h3>
+      <label class="check-item"><input type="checkbox"> セクターローテーションの4局面と、各局面でリードするセクターを述べられる</label>
+      <label class="check-item"><input type="checkbox"> 株式市場が景気に先行する理由と、その時間差（6〜9ヶ月）を説明できる</label>
+      <label class="check-item"><input type="checkbox"> 市場全体の方向を上昇/警戒/下降の3段階で判定する条件を述べられる</label>
+      <label class="check-item"><input type="checkbox"> ディストリビューション・デイのカウント方法と、警戒閾値（4〜5日/4〜5週間）を説明できる</label>
+      <label class="check-item"><input type="checkbox"> 週次セクター分析の5ステップワークフローを実行できる</label>
+      <label class="check-item"><input type="checkbox"> セクターと個別銘柄の相対強度を計算する方法を説明できる</label>
+      <label class="check-item"><input type="checkbox"> 「弱いセクターの良いパターン」がなぜ避けるべきかを説明できる</label>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <p>Swing Trading Curriculum — Module 07 / 08</p>
+    <p style="margin-top:8px">原典：Sam Stovall / O'Neil『How to Make Money in Stocks』</p>
+    <p style="margin-top:4px">本教材は投資助言ではありません。投資判断はご自身の責任で行ってください。</p>
+    <p style="margin-top:16px"><a href="module-06-chart-patterns.html">← Module 06: チャートパターン</a>　｜　<a href="module-08-japan-specific.html">Module 08: 日本株固有の構造 →</a></p>
+  </div>
+</footer>
+
+</body>
+</html>
