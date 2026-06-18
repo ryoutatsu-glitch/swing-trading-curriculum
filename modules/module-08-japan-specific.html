@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Module 08 — 日本株固有の構造 | Swing Trading Curriculum</title>
+<style>
+  :root {
+    --bg: #0a0c10; --surface: #12151e; --surface2: #1a1f2e;
+    --border: #1e293b; --text: #e2e8f0; --text2: #94a3b8; --text3: #64748b;
+    --s2: #22c55e; --s4: #ef4444; --s3: #eab308;
+    --accent: #818cf8; --cyan: #06b6d4; --red: #dc2626;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { background: var(--bg); color: var(--text); font-family: "Hiragino Kaku Gothic ProN","Noto Sans JP","Yu Gothic",sans-serif; line-height: 1.8; font-size: 15px; -webkit-font-smoothing: antialiased; }
+  .container { max-width: 760px; margin: 0 auto; padding: 0 24px; }
+  .hero { padding: 80px 0 60px; border-bottom: 1px solid var(--border); background: linear-gradient(180deg, #0f1219 0%, var(--bg) 100%); }
+  .hero-module { font-size: 11px; letter-spacing: 4px; text-transform: uppercase; color: var(--accent); margin-bottom: 16px; font-weight: 600; }
+  .hero h1 { font-size: clamp(28px, 5vw, 42px); font-weight: 800; line-height: 1.3; letter-spacing: -0.5px; margin-bottom: 12px; }
+  .hero h1 em { font-style: normal; color: var(--red); }
+  .hero-sub { font-size: 16px; color: var(--text2); max-width: 560px; }
+  .hero-meta { margin-top: 32px; display: flex; gap: 24px; flex-wrap: wrap; font-size: 12px; color: var(--text3); }
+  section { padding: 56px 0; border-bottom: 1px solid var(--border); }
+  section:last-of-type { border-bottom: none; }
+  .section-label { font-size: 11px; letter-spacing: 3px; text-transform: uppercase; color: var(--accent); margin-bottom: 20px; font-weight: 600; }
+  h2 { font-size: 22px; font-weight: 700; margin-bottom: 16px; letter-spacing: -0.3px; }
+  p { color: var(--text2); margin-bottom: 16px; }
+  p strong { color: var(--text); font-weight: 600; }
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; margin-bottom: 16px; overflow: hidden; }
+  .card:hover { border-color: var(--text3); }
+  .card-header { padding: 20px 24px; cursor: pointer; display: flex; align-items: center; gap: 16px; user-select: none; }
+  .card-header:hover { background: var(--surface2); }
+  .card-num { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 800; color: var(--bg); flex-shrink: 0; }
+  .card-header-text h3 { font-size: 16px; font-weight: 700; margin-bottom: 2px; }
+  .card-header-text span { font-size: 13px; color: var(--text2); }
+  .card-toggle { margin-left: auto; font-size: 20px; color: var(--text3); transition: transform 0.3s; flex-shrink: 0; }
+  .card.open .card-toggle { transform: rotate(45deg); }
+  .card-body { max-height: 0; overflow: hidden; transition: max-height 0.4s ease; }
+  .card.open .card-body { max-height: 4000px; }
+  .card-content { padding: 0 24px 24px; }
+  .card-content h4 { font-size: 13px; font-weight: 700; color: var(--text); letter-spacing: 1px; text-transform: uppercase; margin: 20px 0 10px; padding-top: 16px; border-top: 1px solid var(--border); }
+  .card-content h4:first-child { border-top: none; padding-top: 0; margin-top: 0; }
+  .card-content ul { list-style: none; padding: 0; }
+  .card-content li { padding: 6px 0 6px 20px; color: var(--text2); font-size: 14px; position: relative; }
+  .card-content li::before { content: ""; position: absolute; left: 0; top: 14px; width: 6px; height: 6px; border-radius: 50%; background: var(--red); }
+  .insight-box { background: var(--surface2); border-left: 3px solid var(--s2); border-radius: 0 8px 8px 0; padding: 16px 20px; margin: 20px 0; }
+  .insight-box p { margin: 0; font-size: 14px; }
+  .warn-box { background: var(--surface2); border-left: 3px solid var(--s4); border-radius: 0 8px 8px 0; padding: 16px 20px; margin: 20px 0; }
+  .warn-box p { margin: 0; font-size: 14px; }
+  .info-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 12px; margin: 20px 0; }
+  .info-item { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 16px; }
+  .info-item .info-label { font-size: 11px; color: var(--text3); letter-spacing: 0.5px; text-transform: uppercase; margin-bottom: 6px; }
+  .info-item .info-value { font-size: 15px; font-weight: 600; color: var(--text); }
+  .info-item .info-desc { font-size: 12px; color: var(--text2); margin-top: 4px; }
+  .rule-list { margin: 24px 0; }
+  .rule { display: flex; gap: 16px; padding: 16px 0; border-bottom: 1px solid var(--border); align-items: flex-start; }
+  .rule:last-child { border-bottom: none; }
+  .rule-num { width: 32px; height: 32px; border-radius: 8px; background: var(--accent); color: var(--bg); display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 800; flex-shrink: 0; }
+  .rule-text { font-size: 14px; color: var(--text2); }
+  .rule-text strong { color: var(--text); }
+  .checklist { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 24px; margin: 24px 0; }
+  .checklist h3 { font-size: 14px; font-weight: 700; margin-bottom: 16px; letter-spacing: 1px; }
+  .check-item { display: flex; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--border); font-size: 14px; color: var(--text2); cursor: pointer; }
+  .check-item:last-child { border-bottom: none; }
+  .check-item input[type="checkbox"] { width: 18px; height: 18px; accent-color: var(--s2); cursor: pointer; }
+  .check-item:has(input:checked) { color: var(--text3); text-decoration: line-through; }
+  .bridge { background: linear-gradient(135deg, var(--surface) 0%, var(--surface2) 100%); border: 1px solid var(--border); border-radius: 12px; padding: 32px; margin: 24px 0; }
+  .bridge h3 { font-size: 16px; margin-bottom: 12px; }
+  .bridge p { font-size: 14px; }
+  footer { padding: 40px 0; text-align: center; font-size: 12px; color: var(--text3); border-top: 1px solid var(--border); }
+  footer a { color: var(--accent); text-decoration: none; }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="container">
+    <div class="hero-module">Module 08 / 08 — Final</div>
+    <h1>日本株固有の<em>構造</em></h1>
+    <p class="hero-sub">米国株ベースの理論を日本市場で使うために知っておくべき構造的な違い。</p>
+    <div class="hero-meta">
+      <span>🇯🇵 東京証券取引所</span>
+      <span>⏱ 読了15分</span>
+    </div>
+  </div>
+</header>
+
+<!-- Trading Structure -->
+<section>
+  <div class="container">
+    <div class="section-label">Trading Structure</div>
+    <h2>取引制度の違い</h2>
+
+    <div class="card open" onclick="this.classList.toggle('open')">
+      <div class="card-header">
+        <div class="card-num" style="background:var(--red)">1</div>
+        <div class="card-header-text"><h3>単元株制度</h3><span>100株単位でしか売買できない</span></div>
+        <div class="card-toggle">+</div>
+      </div>
+      <div class="card-body"><div class="card-content">
+        <ul>
+          <li>日本株は原則<strong>100株単位</strong>でしか取引できない。株価1,500円の銘柄なら最低投資額15万円</li>
+          <li>63万円の口座では、株価3,000円以下の銘柄で2ポジション、6,000円以下で1ポジションが現実的な上限</li>
+          <li>Module 4のポジションサイジングで算出した「168株→100株」のような端数処理が必ず発生する</li>
+          <li>米国株は1株単位で取引可能なため、この制約はない。日本株特有の制約として計算に組み込む</li>
+        </ul>
+        <h4>実務上の対策</h4>
+        <ul>
+          <li>ポジションサイジング計算後、100株単位に切り下げる。端数は常に安全側に倒す</li>
+          <li>単元未満株（楽天証券では「かぶミニ」）も存在するが、リアルタイム取引ができず、スイングトレードには不向き</li>
+        </ul>
+      </div></div>
+    </div>
+
+    <div class="card" onclick="this.classList.toggle('open')">
+      <div class="card-header">
+        <div class="card-num" style="background:var(--red)">2</div>
+        <div class="card-header-text"><h3>値幅制限（ストップ高/ストップ安）</h3><span>1日の変動幅に上限がある</span></div>
+        <div class="card-toggle">+</div>
+      </div>
+      <div class="card-body"><div class="card-content">
+        <ul>
+          <li>日本市場は株価水準に応じて1日の変動上限が設定されている。株価1,000〜1,500円なら±300円（約20〜30%）</li>
+          <li>ストップ安に張り付くと<strong>売りたくても売れない</strong>。損切り注文が約定しないリスクがある</li>
+          <li>米国市場には値幅制限がない（サーキットブレーカーはあるが個別株には原則なし）</li>
+        </ul>
+        <h4>スイングトレードへの影響</h4>
+        <ul>
+          <li>ストップ高は利益を取り逃すリスク（翌日GUで売れるかもしれないが、反落リスクもある）</li>
+          <li>ストップ安は損切りが効かないリスク。特に決算発表後の急落で、逆指値が約定せずGD（ギャップダウン）する可能性</li>
+          <li><strong>対策：</strong>決算発表日をまたいでポジションを持つ場合、このリスクを認識した上でサイズを調整する</li>
+        </ul>
+      </div></div>
+    </div>
+
+    <div class="card" onclick="this.classList.toggle('open')">
+      <div class="card-header">
+        <div class="card-num" style="background:var(--red)">3</div>
+        <div class="card-header-text"><h3>差金決済の禁止</h3><span>現物では同一資金で同一銘柄を同日に回転売買できない</span></div>
+        <div class="card-toggle">+</div>
+      </div>
+      <div class="card-body"><div class="card-content">
+        <ul>
+          <li>現物取引では、同じ銘柄を同日中に「買い→売り→再度買い」ができない（差金決済の禁止）</li>
+          <li>ただし、A銘柄を売った資金でB銘柄を買うことは可能。異なる銘柄間の回転は問題ない</li>
+          <li>週次スイングでは日をまたぐので、この制約に引っかかることはほぼない</li>
+          <li>信用取引を使えば同一銘柄の回転売買が可能だが、今回は現物のみの前提なので割愛</li>
+        </ul>
+      </div></div>
+    </div>
+
+    <div class="card" onclick="this.classList.toggle('open')">
+      <div class="card-header">
+        <div class="card-num" style="background:var(--red)">4</div>
+        <div class="card-header-text"><h3>取引時間</h3><span>前場と後場に分かれ、昼休みがある</span></div>
+        <div class="card-toggle">+</div>
+      </div>
+      <div class="card-body"><div class="card-content">
+        <div class="info-grid">
+          <div class="info-item"><div class="info-label">前場</div><div class="info-value">9:00 - 11:30</div></div>
+          <div class="info-item"><div class="info-label">後場</div><div class="info-value">12:30 - 15:30</div></div>
+        </div>
+        <ul>
+          <li>米国市場（9:30-16:00、連続6.5時間）と異なり、昼休みがある</li>
+          <li>スイングトレードの場合、9:00の寄付きか15:30の大引けで注文するスタイルが一般的</li>
+          <li>ブレイクアウトのエントリーは寄付き前に<strong>逆指値注文</strong>を設定しておくのが効率的</li>
+          <li>PTS（私設取引所）での時間外取引もあるが、流動性が低く、スイングでは使わなくてよい</li>
+        </ul>
+      </div></div>
+    </div>
+  </div>
+</section>
+
+<!-- Earnings and Fundamentals -->
+<section>
+  <div class="container">
+    <div class="section-label">Earnings Cycle</div>
+    <h2>決算サイクルとファンダメンタル</h2>
+
+    <div class="card open" onclick="this.classList.toggle('open')">
+      <div class="card-header">
+        <div class="card-num" style="background:var(--s3);color:var(--bg)">決</div>
+        <div class="card-header-text"><h3>日本企業の決算構造</h3><span>3月決算が多数派、四半期決算は4回</span></div>
+        <div class="card-toggle">+</div>
+      </div>
+      <div class="card-body"><div class="card-content">
+        <ul>
+          <li>日本企業の約7割が<strong>3月決算</strong>。第1四半期（4-6月）、第2四半期（7-9月）、第3四半期（10-12月）、本決算（1-3月）</li>
+          <li>決算短信は四半期ごとに発表。CAN SLIMの「C」基準は四半期決算短信の数値で判定する</li>
+          <li>決算発表集中月は<strong>5月（本決算）と11月（中間決算）</strong>。この時期はイベントドリブン型の売買機会が増える</li>
+          <li>米国と異なり、日本では<strong>業績予想の修正（上方修正/下方修正）</strong>を適時開示で発表する文化がある。これ自体がカタリストになる</li>
+        </ul>
+        <h4>CAN SLIM「C」の日本版読み替え</h4>
+        <ul>
+          <li>決算短信の「経常利益」または「営業利益」の前年同期比を使う</li>
+          <li>EPSは株式分割の遡及調整が不完全なケースがあるため、利益ベースのほうが信頼性が高い</li>
+          <li>通期業績予想に対する進捗率も確認。上振れ余地のある銘柄は上方修正カタリストの候補</li>
+        </ul>
+      </div></div>
+    </div>
+
+    <div class="card" onclick="this.classList.toggle('open')">
+      <div class="card-header">
+        <div class="card-num" style="background:var(--s3);color:var(--bg)">優</div>
+        <div class="card-header-text"><h3>株主優待</h3><span>日本特有の制度がチャートに影響する</span></div>
+        <div class="card-toggle">+</div>
+      </div>
+      <div class="card-body"><div class="card-content">
+        <ul>
+          <li>株主優待は日本独自の制度。権利確定日の2営業日前（権利付き最終日）までに株を保有すると優待を受けられる</li>
+          <li>優待人気の銘柄は権利確定日に向けて株価が上昇し、<strong>権利落ち後に下落する</strong>パターンが頻出</li>
+          <li>このパターンはテクニカル分析では説明できない制度的な需給歪み</li>
+        </ul>
+        <h4>スイングトレードへの影響</h4>
+        <ul>
+          <li>優待銘柄の権利確定日前後はチャートパターンが歪む。VCPやカップ&ハンドルの判定には不向きな期間</li>
+          <li><strong>対策：</strong>権利確定日の1ヶ月前〜権利落ち後1週間は、優待銘柄のエントリーを避ける</li>
+          <li>優待廃止のIRが出た銘柄は、売り圧力が急増する可能性あり（逆のカタリスト）</li>
+        </ul>
+      </div></div>
+    </div>
+  </div>
+</section>
+
+<!-- Supply & Demand Data -->
+<section>
+  <div class="container">
+    <div class="section-label">Supply & Demand</div>
+    <h2>信用取引の需給データ</h2>
+    <p>日本市場では信用取引のデータが公開されており、需給の傾向を読む材料として活用できます。今回は現物取引のみですが、信用データは市場の「将来の売買圧力」を予測するのに使えます。</p>
+
+    <div class="info-grid">
+      <div class="info-item">
+        <div class="info-label">信用買い残</div>
+        <div class="info-value">将来の売り圧力</div>
+        <div class="info-desc">信用で買った人はいずれ反対売買（売り）で返済する。買い残が多い＝将来の売り圧力が潜在的に大きい。</div>
+      </div>
+      <div class="info-item">
+        <div class="info-label">信用売り残</div>
+        <div class="info-value">将来の買い圧力</div>
+        <div class="info-desc">空売りした人はいずれ買い戻す。売り残が多い＝将来の買い圧力（踏み上げの可能性）。</div>
+      </div>
+      <div class="info-item">
+        <div class="info-label">信用倍率</div>
+        <div class="info-value">買い残 ÷ 売り残</div>
+        <div class="info-desc">1倍以下なら売り圧力が優勢で将来の買い戻し期待。高すぎる場合は上値が重い。</div>
+      </div>
+      <div class="info-item">
+        <div class="info-label">逆日歩</div>
+        <div class="info-value">空売りのコスト</div>
+        <div class="info-desc">貸株不足時に発生。逆日歩がつくと空売り勢が買い戻しを急ぐ＝踏み上げのトリガー。</div>
+      </div>
+    </div>
+
+    <div class="insight-box">
+      <p><strong>💡 実践での使い方：</strong>ブレイクアウト候補の銘柄について、信用倍率が極端に高くないか（上値が重くないか）を事前にチェックする。株探（kabutan.jp）で個別銘柄の信用残データを無料で確認可能。</p>
+    </div>
+  </div>
+</section>
+
+<!-- Tax -->
+<section>
+  <div class="container">
+    <div class="section-label">Tax Structure</div>
+    <h2>税金——特定口座で自動処理</h2>
+
+    <div class="info-grid">
+      <div class="info-item">
+        <div class="info-label">税率</div>
+        <div class="info-value">20.315%</div>
+        <div class="info-desc">所得税15.315%＋住民税5%。譲渡益・配当ともに同率。</div>
+      </div>
+      <div class="info-item">
+        <div class="info-label">特定口座（源泉徴収あり）</div>
+        <div class="info-value">確定申告不要</div>
+        <div class="info-desc">証券会社が税金を自動計算・自動徴収。年間収支がプラスなら何もしなくてよい。</div>
+      </div>
+      <div class="info-item">
+        <div class="info-label">損益通算</div>
+        <div class="info-value">同一年内で損益を相殺</div>
+        <div class="info-desc">特定口座内なら自動で通算される。複数の証券会社を使う場合は確定申告が必要。</div>
+      </div>
+      <div class="info-item">
+        <div class="info-label">繰越控除</div>
+        <div class="info-value">3年間繰越可能</div>
+        <div class="info-desc">年間収支がマイナスの場合、確定申告すれば翌年以降3年間にわたり損失を繰越して利益から控除可能。</div>
+      </div>
+    </div>
+
+    <div class="warn-box">
+      <p><strong>⚠ 学習期間の重要な注意：</strong>63万円の学習資本で年間収支がマイナスに終わった場合、<strong>確定申告で損失を繰越しておく</strong>こと。翌年以降に利益が出たとき、繰越損失と相殺できる。申告を忘れると繰越の権利を失う。</p>
+    </div>
+  </div>
+</section>
+
+<!-- Information Sources -->
+<section>
+  <div class="container">
+    <div class="section-label">Information Sources</div>
+    <h2>情報ソース——何をどこで見るか</h2>
+
+    <div class="rule-list">
+      <div class="rule"><div class="rule-num" style="background:var(--red)">1</div><div class="rule-text"><strong>株探（kabutan.jp）</strong>——無料で最も使える。個別銘柄のチャート、決算速報、信用残高、業績推移。銘柄探索のメインツール。</div></div>
+      <div class="rule"><div class="rule-num" style="background:var(--red)">2</div><div class="rule-text"><strong>TDnet（適時開示情報閲覧サービス）</strong>——上場企業の公式発表（決算、業績修正、IR）がリアルタイムで掲載される。カタリストの一次情報源。</div></div>
+      <div class="rule"><div class="rule-num" style="background:var(--red)">3</div><div class="rule-text"><strong>楽天証券 マーケットスピードII</strong>——チャート分析のメインツール。移動平均線の設定（50日・150日・200日）はトレンドテンプレート用にカスタマイズしておく。逆指値注文の設定もここから。</div></div>
+      <div class="rule"><div class="rule-num" style="background:var(--red)">4</div><div class="rule-text"><strong>四季報オンライン</strong>——企業の基本情報、業績予想、アナリストコメント。CAN SLIMの「A」「I」の判定に使える。有料だが投資額に対する情報のリターンは十分。</div></div>
+      <div class="rule"><div class="rule-num" style="background:var(--red)">5</div><div class="rule-text"><strong>EDINET</strong>——有価証券報告書、大量保有報告書。機関投資家の保有状況（CAN SLIMの「I」）を確認する際に使う。</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- Rakuten Setup -->
+<section>
+  <div class="container">
+    <div class="section-label">Rakuten Setup</div>
+    <h2>楽天証券の初期設定チェックリスト</h2>
+
+    <div class="checklist">
+      <h3>☑ 口座開設後すぐやること</h3>
+      <label class="check-item"><input type="checkbox"> 特定口座（源泉徴収あり）を選択する</label>
+      <label class="check-item"><input type="checkbox"> 手数料コースを「ゼロコース」に変更する（国内株手数料無料）</label>
+      <label class="check-item"><input type="checkbox"> マーケットスピードII（PC）またはiSPEED（スマホ）をインストールする</label>
+      <label class="check-item"><input type="checkbox"> チャートの移動平均線を50日・150日・200日に設定する（トレンドテンプレート用）</label>
+      <label class="check-item"><input type="checkbox"> 出来高表示をチャートに追加する</label>
+      <label class="check-item"><input type="checkbox"> 逆指値注文の出し方を練習する（損切りの自動化に必須）</label>
+      <label class="check-item"><input type="checkbox"> 銘柄リスト（ウォッチリスト）を作成し、候補銘柄を登録する</label>
+    </div>
+  </div>
+</section>
+
+<!-- Final Summary -->
+<section>
+  <div class="container">
+    <div class="section-label">Curriculum Complete</div>
+    <h2>カリキュラム完走——ここからが本番</h2>
+
+    <div class="bridge">
+      <h3>8モジュールの全体像</h3>
+      <p>
+        <strong>Module 1：</strong>Stage 2の株だけ買う<br>
+        <strong>Module 2：</strong>トレンドテンプレートでフィルターし、VCPでエントリーする<br>
+        <strong>Module 3：</strong>ファンダメンタルが強い銘柄を選ぶ<br>
+        <strong>Module 4：</strong>1トレードのリスクを口座の2%以内に制限する<br>
+        <strong>Module 5：</strong>ルールを破る心理メカニズムを知り、仕組みで対処する<br>
+        <strong>Module 6：</strong>VCP以外のセットアップパターンを識別する<br>
+        <strong>Module 7：</strong>強いセクターの中の強い銘柄を買う<br>
+        <strong>Module 8：</strong>日本株固有のルールとツールを把握する
+      </p>
+      <p style="margin-top:16px"><strong>次のステップ：</strong>トレードジャーナルを構築し、63万円で最初のトレードを実行する。最初の20トレードの目標は利益ではなく「ルール遵守率80%以上」。勝率や期待値の評価はデータが溜まってから。</p>
+    </div>
+
+    <div class="checklist">
+      <h3>☑ MODULE 8 COMPLETION</h3>
+      <label class="check-item"><input type="checkbox"> 単元株制度がポジションサイジングにどう影響するか説明できる</label>
+      <label class="check-item"><input type="checkbox"> 値幅制限（ストップ高/安）のリスクと対策を述べられる</label>
+      <label class="check-item"><input type="checkbox"> 日本企業の決算サイクル（3月決算・四半期報告）を理解している</label>
+      <label class="check-item"><input type="checkbox"> 株主優待がチャートに与える影響と、対策を説明できる</label>
+      <label class="check-item"><input type="checkbox"> 信用残高・信用倍率の意味と、需給判断への使い方を述べられる</label>
+      <label class="check-item"><input type="checkbox"> 特定口座の仕組みと、損失繰越控除の重要性を理解している</label>
+      <label class="check-item"><input type="checkbox"> 5つの情報ソースの役割を説明できる</label>
+      <label class="check-item"><input type="checkbox"> 楽天証券の初期設定チェックリストを完了した</label>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <p style="font-size:14px;color:var(--text);font-weight:700;margin-bottom:16px">🎓 Swing Trading Curriculum — 全8モジュール完了</p>
+    <p>63万円を学習資本として、短期投資で利益を出す能力と環境を構築する。</p>
+    <p style="margin-top:4px">本教材は投資助言ではありません。投資判断はご自身の責任で行ってください。</p>
+    <p style="margin-top:16px"><a href="module-07-sector-rotation.html">← Module 07: セクターローテーション</a></p>
+  </div>
+</footer>
+
+</body>
+</html>
