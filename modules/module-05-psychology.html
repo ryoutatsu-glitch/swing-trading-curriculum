@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Module 05 — トレーディング心理学 | Swing Trading Curriculum</title>
+<style>
+  :root {
+    --bg: #0a0c10; --surface: #12151e; --surface2: #1a1f2e;
+    --border: #1e293b; --text: #e2e8f0; --text2: #94a3b8; --text3: #64748b;
+    --s2: #22c55e; --s4: #ef4444; --s3: #eab308;
+    --accent: #818cf8; --cyan: #06b6d4; --rose: #f43f5e;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { background: var(--bg); color: var(--text); font-family: "Hiragino Kaku Gothic ProN","Noto Sans JP","Yu Gothic",sans-serif; line-height: 1.8; font-size: 15px; -webkit-font-smoothing: antialiased; }
+  .container { max-width: 760px; margin: 0 auto; padding: 0 24px; }
+  .hero { padding: 80px 0 60px; border-bottom: 1px solid var(--border); background: linear-gradient(180deg, #0f1219 0%, var(--bg) 100%); }
+  .hero-module { font-size: 11px; letter-spacing: 4px; text-transform: uppercase; color: var(--accent); margin-bottom: 16px; font-weight: 600; }
+  .hero h1 { font-size: clamp(28px, 5vw, 42px); font-weight: 800; line-height: 1.3; letter-spacing: -0.5px; margin-bottom: 12px; }
+  .hero h1 em { font-style: normal; color: var(--rose); }
+  .hero-sub { font-size: 16px; color: var(--text2); max-width: 560px; }
+  .hero-meta { margin-top: 32px; display: flex; gap: 24px; flex-wrap: wrap; font-size: 12px; color: var(--text3); }
+  section { padding: 56px 0; border-bottom: 1px solid var(--border); }
+  section:last-of-type { border-bottom: none; }
+  .section-label { font-size: 11px; letter-spacing: 3px; text-transform: uppercase; color: var(--accent); margin-bottom: 20px; font-weight: 600; }
+  h2 { font-size: 22px; font-weight: 700; margin-bottom: 16px; letter-spacing: -0.3px; line-height: 1.4; }
+  p { color: var(--text2); margin-bottom: 16px; }
+  p strong { color: var(--text); font-weight: 600; }
+  blockquote { border-left: 3px solid var(--accent); padding: 16px 20px; margin: 24px 0; background: var(--surface); border-radius: 0 8px 8px 0; }
+  blockquote p { font-size: 14px; color: var(--text); margin: 0; font-style: italic; }
+  blockquote cite { display: block; font-size: 12px; color: var(--text3); margin-top: 8px; font-style: normal; }
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; margin-bottom: 16px; overflow: hidden; }
+  .card:hover { border-color: var(--text3); }
+  .card-header { padding: 20px 24px; cursor: pointer; display: flex; align-items: center; gap: 16px; user-select: none; }
+  .card-header:hover { background: var(--surface2); }
+  .card-num { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 800; color: var(--bg); flex-shrink: 0; }
+  .card-header-text h3 { font-size: 16px; font-weight: 700; margin-bottom: 2px; }
+  .card-header-text span { font-size: 13px; color: var(--text2); }
+  .card-toggle { margin-left: auto; font-size: 20px; color: var(--text3); transition: transform 0.3s; flex-shrink: 0; }
+  .card.open .card-toggle { transform: rotate(45deg); }
+  .card-body { max-height: 0; overflow: hidden; transition: max-height 0.4s ease; }
+  .card.open .card-body { max-height: 4000px; }
+  .card-content { padding: 0 24px 24px; }
+  .card-content h4 { font-size: 13px; font-weight: 700; color: var(--text); letter-spacing: 1px; text-transform: uppercase; margin: 20px 0 10px; padding-top: 16px; border-top: 1px solid var(--border); }
+  .card-content h4:first-child { border-top: none; padding-top: 0; margin-top: 0; }
+  .card-content ul { list-style: none; padding: 0; }
+  .card-content li { padding: 6px 0 6px 20px; color: var(--text2); font-size: 14px; position: relative; }
+  .card-content li::before { content: ""; position: absolute; left: 0; top: 14px; width: 6px; height: 6px; border-radius: 50%; background: var(--rose); }
+  .vs-box { display: grid; grid-template-columns: 1fr auto 1fr; gap: 0; margin: 24px 0; align-items: stretch; }
+  @media (max-width: 600px) { .vs-box { grid-template-columns: 1fr; } .vs-mid { padding: 8px 0 !important; } }
+  .vs-left, .vs-right { background: var(--surface); border: 1px solid var(--border); padding: 20px; border-radius: 12px; }
+  .vs-mid { display: flex; align-items: center; justify-content: center; padding: 0 12px; font-size: 14px; font-weight: 800; color: var(--text3); }
+  .vs-label { font-size: 11px; font-weight: 700; letter-spacing: 1px; margin-bottom: 8px; }
+  .vs-text { font-size: 14px; color: var(--text2); margin: 0; }
+  .diagram-wrap { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 32px 24px; margin: 32px 0; overflow-x: auto; }
+  .diagram-caption { text-align: center; font-size: 12px; color: var(--text3); margin-top: 16px; }
+  .warn-box { background: var(--surface2); border-left: 3px solid var(--s4); border-radius: 0 8px 8px 0; padding: 16px 20px; margin: 20px 0; }
+  .warn-box p { margin: 0; font-size: 14px; }
+  .insight-box { background: var(--surface2); border-left: 3px solid var(--s2); border-radius: 0 8px 8px 0; padding: 16px 20px; margin: 20px 0; }
+  .insight-box p { margin: 0; font-size: 14px; }
+  .rule-list { margin: 24px 0; }
+  .rule { display: flex; gap: 16px; padding: 16px 0; border-bottom: 1px solid var(--border); align-items: flex-start; }
+  .rule:last-child { border-bottom: none; }
+  .rule-num { width: 32px; height: 32px; border-radius: 8px; background: var(--accent); color: var(--bg); display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 800; flex-shrink: 0; }
+  .rule-text { font-size: 14px; color: var(--text2); }
+  .rule-text strong { color: var(--text); }
+  .checklist { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 24px; margin: 24px 0; }
+  .checklist h3 { font-size: 14px; font-weight: 700; margin-bottom: 16px; letter-spacing: 1px; }
+  .check-item { display: flex; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--border); font-size: 14px; color: var(--text2); cursor: pointer; }
+  .check-item:last-child { border-bottom: none; }
+  .check-item input[type="checkbox"] { width: 18px; height: 18px; accent-color: var(--s2); cursor: pointer; }
+  .check-item:has(input:checked) { color: var(--text3); text-decoration: line-through; }
+  .bridge { background: linear-gradient(135deg, var(--surface) 0%, var(--surface2) 100%); border: 1px solid var(--border); border-radius: 12px; padding: 32px; margin: 24px 0; }
+  .bridge h3 { font-size: 16px; margin-bottom: 12px; }
+  .bridge p { font-size: 14px; }
+  footer { padding: 40px 0; text-align: center; font-size: 12px; color: var(--text3); border-top: 1px solid var(--border); }
+  footer a { color: var(--accent); text-decoration: none; }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="container">
+    <div class="hero-module">Module 05 / 08</div>
+    <h1>トレーディング<br><em>心理学</em></h1>
+    <p class="hero-sub">ルールは理解できる。問題は、それを守れるかどうか。<br>「わかっているのにできない」の構造を解体する。</p>
+    <div class="hero-meta">
+      <span>📖 Daniel Kahneman『Thinking, Fast and Slow』</span>
+      <span>📖 Kahneman & Tversky (1979) Prospect Theory</span>
+      <span>⏱ 読了20分</span>
+    </div>
+  </div>
+</header>
+
+<!-- The Core Problem -->
+<section>
+  <div class="container">
+    <div class="section-label">The Discipline Gap</div>
+    <h2>知識と実行の断裂</h2>
+    <p>Module 1〜4で学んだルールは、どれも理解が難しいものではありません。Stage 2でだけ買う。VCPのブレイクアウトで入る。損切りは−5〜8%。リスクは口座の2%まで。</p>
+    <p><strong>しかし、実際にお金がかかった瞬間、これらのルールを守れなくなる。</strong>これは意志力の問題ではなく、人間の脳の構造上の問題です。</p>
+    <p>KahnemanとTverskyが1979年に発表したプロスペクト理論は、この「合理的に考えればわかるのに、実際にはそう行動できない」パターンを数学的に記述しました。トレーディングにおけるほぼすべての心理的な失敗は、この理論で説明できます。</p>
+  </div>
+</section>
+
+<!-- Prospect Theory -->
+<section>
+  <div class="container">
+    <div class="section-label">Prospect Theory</div>
+    <h2>プロスペクト理論——損失の痛みは利益の喜びの2倍</h2>
+    <p>プロスペクト理論の核心は3つの発見です。</p>
+
+    <div class="card open" onclick="this.classList.toggle('open')">
+      <div class="card-header">
+        <div class="card-num" style="background:var(--rose)">1</div>
+        <div class="card-header-text">
+          <h3>損失回避（Loss Aversion）</h3>
+          <span>同じ金額でも、失う痛みは得る喜びの約2.25倍</span>
+        </div>
+        <div class="card-toggle">+</div>
+      </div>
+      <div class="card-body"><div class="card-content">
+        <h4>メカニズム</h4>
+        <ul>
+          <li>1万円を得たときの喜びを「1」とすると、1万円を失ったときの痛みは「2.25」</li>
+          <li>だから人は損失を確定することを極端に嫌う。含み損のポジションを持ち続ける</li>
+          <li>逆に、利益が出ているポジションはすぐに確定したくなる（「消えてしまう前に確保しよう」）</li>
+        </ul>
+        <h4>トレードへの影響</h4>
+        <ul>
+          <li><strong>損切りができない</strong>——損失を確定させる行為は脳にとって物理的な痛みに近い。だから「もう少し待てば戻る」と自分を騙す</li>
+          <li><strong>利確が早すぎる</strong>——利益が出たら、それが消える恐怖のほうが、さらに伸びる期待より強くなる</li>
+          <li>結果として<strong>「損大利小」</strong>——Module 4で学んだ期待値がマイナスの構造を、自らの心理で作り出してしまう</li>
+        </ul>
+      </div></div>
+    </div>
+
+    <div class="card" onclick="this.classList.toggle('open')">
+      <div class="card-header">
+        <div class="card-num" style="background:var(--rose)">2</div>
+        <div class="card-header-text">
+          <h3>参照点依存（Reference Dependence）</h3>
+          <span>絶対値ではなく、「基準点からの変化」で判断する</span>
+        </div>
+        <div class="card-toggle">+</div>
+      </div>
+      <div class="card-body"><div class="card-content">
+        <h4>メカニズム</h4>
+        <ul>
+          <li>人間は結果を絶対的な資産額ではなく、<strong>購入価格（参照点）からの変化</strong>として評価する</li>
+          <li>1,500円で買った株が1,600円のとき、あなたは「資産が16万円ある」と考えるのではなく、「1万円得をしている」と考える</li>
+          <li>この参照点は合理的な投資判断とは無関係。株は「あなたがいくらで買ったか」を知らない</li>
+        </ul>
+        <h4>トレードへの影響</h4>
+        <ul>
+          <li><strong>「買値に戻ったら売ろう」</strong>——損失回避と参照点依存の合わせ技。買値に意味はないのに、そこが心理的なゴールになる</li>
+          <li><strong>ナンピン（買い下がり）</strong>——参照点（平均取得価格）を下げることで、心理的に「損失を小さく見せる」行為。実際にはリスクが倍増している</li>
+        </ul>
+      </div></div>
+    </div>
+
+    <div class="card" onclick="this.classList.toggle('open')">
+      <div class="card-header">
+        <div class="card-num" style="background:var(--rose)">3</div>
+        <div class="card-header-text">
+          <h3>ディスポジション効果（Disposition Effect）</h3>
+          <span>勝っている株を売り、負けている株を持ち続ける</span>
+        </div>
+        <div class="card-toggle">+</div>
+      </div>
+      <div class="card-body"><div class="card-content">
+        <h4>メカニズム</h4>
+        <ul>
+          <li>プロスペクト理論の直接的な帰結。利益領域ではリスク回避（早く確定したい）、損失領域ではリスク追求（逆転を待ちたい）</li>
+          <li>1985年にShefrinとStatmanが命名。以降、世界中のマーケットで個人投資家に普遍的に観察されている</li>
+          <li>プロのトレーダーはこの効果が著しく小さい——つまりこれは克服可能な偏りである</li>
+        </ul>
+        <h4>Module 1〜4との矛盾</h4>
+        <ul>
+          <li>ディスポジション効果に従うと、Stage 2で上昇中の株を利確し、Stage 4で下落中の株を保有し続ける——<strong>Module 1のルールの正反対の行動</strong>を取ることになる</li>
+          <li>Module 4の「損小利大」と完全に逆。勝ちを小さく、負けを大きくする構造</li>
+          <li>だからこそ機械的な損切りルールが必要になる。ルールは、この心理的偏りを上書きするためのものである</li>
+        </ul>
+      </div></div>
+    </div>
+
+    <div class="vs-box">
+      <div class="vs-left">
+        <div class="vs-label" style="color:var(--s4)">脳がやりたがること</div>
+        <p class="vs-text">利益が出たら→すぐ確定したい<br>損が出たら→持ち続けたい<br>連敗したら→サイズを上げて取り返したい</p>
+      </div>
+      <div class="vs-mid">VS</div>
+      <div class="vs-right">
+        <div class="vs-label" style="color:var(--s2)">ルールが求めること</div>
+        <p class="vs-text">利益が出たら→トレーリングストップで伸ばす<br>損が出たら→−5%で即座に切る<br>連敗したら→サイズを半減する</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Cognitive Biases -->
+<section>
+  <div class="container">
+    <div class="section-label">Cognitive Biases</div>
+    <h2>トレードを歪める認知バイアス</h2>
+    <p>プロスペクト理論以外にも、トレードの判断を歪める認知バイアスがあります。</p>
+
+    <div class="card" onclick="this.classList.toggle('open')">
+      <div class="card-header">
+        <div class="card-num" style="background:var(--s3);color:var(--bg)">⚡</div>
+        <div class="card-header-text">
+          <h3>確証バイアス（Confirmation Bias）</h3>
+          <span>自分に都合のいい情報だけ見えてしまう</span>
+        </div>
+        <div class="card-toggle">+</div>
+      </div>
+      <div class="card-body"><div class="card-content">
+        <ul>
+          <li>ポジションを持った瞬間、その銘柄の良いニュースは目に入り、悪いニュースは無視する</li>
+          <li>「この株が上がる理由」を探し、「上がらない理由」を見ない</li>
+          <li><strong>対策：</strong>エントリー前に「この株を買わない理由」を3つ書き出す。それでも買うなら、理由は強いということ</li>
+        </ul>
+      </div></div>
+    </div>
+
+    <div class="card" onclick="this.classList.toggle('open')">
+      <div class="card-header">
+        <div class="card-num" style="background:var(--s3);color:var(--bg)">⚡</div>
+        <div class="card-header-text">
+          <h3>アンカリング（Anchoring）</h3>
+          <span>最初に見た数字に判断が引きずられる</span>
+        </div>
+        <div class="card-toggle">+</div>
+      </div>
+      <div class="card-body"><div class="card-content">
+        <ul>
+          <li>「先週2,000円だったのに今1,500円だから安い」——先週の価格に判断がアンカーされている</li>
+          <li>株価の「安い・高い」はチャートの過去の値ではなく、トレンドテンプレートやVCPの条件で判断すべき</li>
+          <li><strong>対策：</strong>常に「今この価格でゼロからポジションを建てるか？」と自問する</li>
+        </ul>
+      </div></div>
+    </div>
+
+    <div class="card" onclick="this.classList.toggle('open')">
+      <div class="card-header">
+        <div class="card-num" style="background:var(--s3);color:var(--bg)">⚡</div>
+        <div class="card-header-text">
+          <h3>直近偏重（Recency Bias）</h3>
+          <span>直近の結果に過度に引きずられる</span>
+        </div>
+        <div class="card-toggle">+</div>
+      </div>
+      <div class="card-body"><div class="card-content">
+        <ul>
+          <li>3連勝すると「自分は上手い、もっとサイズを上げよう」と思う</li>
+          <li>3連敗すると「この手法は駄目だ、別の方法を試そう」と思う</li>
+          <li>どちらもサンプル数が足りない段階での判断。Module 4で学んだ期待値は、最低20〜30トレードのデータが必要</li>
+          <li><strong>対策：</strong>結果ではなくプロセスを評価する。「ルール通りにトレードできたか」が基準</li>
+        </ul>
+      </div></div>
+    </div>
+
+    <div class="card" onclick="this.classList.toggle('open')">
+      <div class="card-header">
+        <div class="card-num" style="background:var(--s3);color:var(--bg)">⚡</div>
+        <div class="card-header-text">
+          <h3>サンクコスト（Sunk Cost Fallacy）</h3>
+          <span>「ここまで待ったのだから」で判断を歪める</span>
+        </div>
+        <div class="card-toggle">+</div>
+      </div>
+      <div class="card-body"><div class="card-content">
+        <ul>
+          <li>含み損のポジションを持ち続ける理由が「もう3週間持っているから」になる</li>
+          <li>過去に費やした時間や感情的投資は、今後の正しい判断には一切関係がない</li>
+          <li><strong>対策：</strong>「今このポジションを持っていなかったとして、今日この価格で新規に買うか？」答えがNoなら売る</li>
+        </ul>
+      </div></div>
+    </div>
+  </div>
+</section>
+
+<!-- Tilt -->
+<section>
+  <div class="container">
+    <div class="section-label">Tilt</div>
+    <h2>ティルト——感情がシステムを上書きする瞬間</h2>
+    <p>ゲーム理論やTFTの文脈では馴染み深い概念でしょう。<strong>ティルトとは、感情的な反応がルールベースの判断を上書きする状態</strong>です。トレードにおいてティルトは最大の破壊要因です。</p>
+
+    <div class="card open" onclick="this.classList.toggle('open')">
+      <div class="card-header">
+        <div class="card-num" style="background:var(--s4)">!</div>
+        <div class="card-header-text">
+          <h3>ティルトの典型パターン</h3>
+          <span>認識できれば対処できる</span>
+        </div>
+        <div class="card-toggle">+</div>
+      </div>
+      <div class="card-body"><div class="card-content">
+        <h4>リベンジトレード</h4>
+        <ul>
+          <li>損切り直後に「取り返してやる」と衝動的にエントリー。VCPもトレンドテンプレートも無視</li>
+          <li>感情の源泉は損失回避バイアス。「今日をプラスで終わりたい」という参照点依存</li>
+          <li>TFTで言えば、負けた直後に「取り返す」ためにハイリスクな構成を組むのと同じ。勝率は下がる</li>
+        </ul>
+        <h4>オーバートレード</h4>
+        <ul>
+          <li>連勝後に「自分は特別だ」と感じ、ポジションサイズを拡大。2%ルールを破る</li>
+          <li>直近偏重バイアス＋自信過剰（Overconfidence）の合わせ技</li>
+          <li>相場が変化して連敗したとき、拡大したサイズが致命的なドローダウンを生む</li>
+        </ul>
+        <h4>分析麻痺（Analysis Paralysis）</h4>
+        <ul>
+          <li>連敗の恐怖から、条件を満たす銘柄が目の前にあるのにエントリーできない</li>
+          <li>「もっと確実なセットアップを待とう」が無限に続く。機会損失が積み上がる</li>
+          <li>これもティルトの一形態。恐怖がルールを上書きしている</li>
+        </ul>
+      </div></div>
+    </div>
+
+    <div class="insight-box">
+      <p><strong>💡 ティルトの検出法：</strong>「いつもと違う判断をしようとしている自分」に気づくこと。ルールに書いていないことをやろうとしている瞬間、それはティルト。トレードする前に「これはルールに基づいた判断か、感情に基づいた判断か」を1秒だけ自問する。</p>
+    </div>
+  </div>
+</section>
+
+<!-- Practical Framework -->
+<section>
+  <div class="container">
+    <div class="section-label">Countermeasures</div>
+    <h2>心理バイアスへの実践的な対策</h2>
+    <p>バイアスは「知っている」だけでは消えません。Kahnemanも認めているように、自分のバイアスを知っていても、それを経験する強さは変わらない。だからこそ<strong>仕組みで対処する</strong>必要があります。</p>
+
+    <div class="rule-list">
+      <div class="rule"><div class="rule-num">1</div><div class="rule-text"><strong>エントリー時に損切り注文を同時に入れる。</strong>「後で考える」は100%感情に負ける。逆指値注文として機械的にシステムに入れる。判断の余地を残さない。</div></div>
+      <div class="rule"><div class="rule-num">2</div><div class="rule-text"><strong>トレード前にジャーナルに仮説を書く。</strong>「なぜ買うのか」「何が起きたら売るのか」を言語化してから発注する。書けないなら、それはトレードすべきではないというシグナル。</div></div>
+      <div class="rule"><div class="rule-num">3</div><div class="rule-text"><strong>連敗後は1日休む。</strong>3連敗したら、翌日はチャートを見ない。休むこと自体がルール。「何もしない」もトレードの一部。</div></div>
+      <div class="rule"><div class="rule-num">4</div><div class="rule-text"><strong>週次レビューでプロセスを評価する。</strong>「今週いくら稼いだか」ではなく「今週ルールを何回守れたか」を数える。ルール遵守率80%以上を目標にする。利益は結果。プロセスが原因。</div></div>
+      <div class="rule"><div class="rule-num">5</div><div class="rule-text"><strong>トレードの結果と判断の質を分離する。</strong>ルール通りにトレードして損切りになった → 良いトレード。ルールを破って偶然利益が出た → 悪いトレード。長期的には良いトレードを積み重ねたほうが勝つ。</div></div>
+    </div>
+
+    <blockquote>
+      <p>最も優れたトレーダーとは、最も多く正しい予測をする人ではない。間違ったときに最も速く損失を限定できる人だ。</p>
+      <cite>— Mark Minervini</cite>
+    </blockquote>
+  </div>
+</section>
+
+<!-- Journal as Psychological Tool -->
+<section>
+  <div class="container">
+    <div class="section-label">The Journal</div>
+    <h2>トレードジャーナル——心理の記録装置</h2>
+    <p>Module 4でジャーナルの数値面（R, W, E, D）を解説しました。ここでは心理面の記録を追加します。</p>
+    <p><strong>すべてのトレードについて、以下を記録する：</strong></p>
+    <div class="rule-list">
+      <div class="rule"><div class="rule-num" style="background:var(--rose)">感</div><div class="rule-text"><strong>エントリー時の感情状態。</strong>「冷静」「焦り」「自信過剰」「不安」「リベンジ」など。1〜2語で記録するだけでいい。</div></div>
+      <div class="rule"><div class="rule-num" style="background:var(--rose)">遵</div><div class="rule-text"><strong>ルール遵守の自己採点。</strong>トレンドテンプレートを確認したか。損切りを設定したか。サイズは2%ルール以内か。Yes/Noで記録。</div></div>
+      <div class="rule"><div class="rule-num" style="background:var(--rose)">学</div><div class="rule-text"><strong>事後の教訓。</strong>「何を学んだか」を1文で。特に、ルールを破った場合はなぜ破ったかの原因分析。</div></div>
+    </div>
+    <p>20トレード後にジャーナルを振り返ると、自分の心理パターンが見えてきます。「焦り」の状態でエントリーしたトレードの勝率、「冷静」な状態でのそれ。データが自分のバイアスを教えてくれる。</p>
+  </div>
+</section>
+
+<!-- Bridge -->
+<section>
+  <div class="container">
+    <div class="section-label">Next</div>
+    <h2>Module 6への橋——チャートパターンと出来高分析</h2>
+    <div class="bridge">
+      <h3>必修科目が完了した</h3>
+      <p>Module 1〜5で、スイングトレードに必要な<strong>基盤</strong>が揃いました。いつ買うか（Stage 2）、どこで買うか（VCP）、何を買うか（CAN SLIM）、どれだけ買うか（ポジションサイジング）、そしてルールを守るための心理的な準備。</p>
+      <p style="margin-top:12px">Module 6以降は選択科目です。実弾投入と並行して学ぶ内容であり、トレード経験が増えるほど理解が深まるモジュールになります。Module 6では、VCPだけでなく他のチャートパターンと出来高の読み方を体系的に学び、セットアップの引き出しを増やします。</p>
+    </div>
+  </div>
+</section>
+
+<!-- Checklist -->
+<section>
+  <div class="container">
+    <div class="section-label">Self Check</div>
+    <h2>理解度チェックリスト</h2>
+    <div class="checklist">
+      <h3>☑ MODULE 5 COMPLETION</h3>
+      <label class="check-item"><input type="checkbox"> プロスペクト理論の3つの核心（損失回避、参照点依存、リスク態度の非対称）を説明できる</label>
+      <label class="check-item"><input type="checkbox"> ディスポジション効果がなぜ「損大利小」を生むか説明できる</label>
+      <label class="check-item"><input type="checkbox"> 確証バイアス・アンカリング・直近偏重・サンクコストのそれぞれがトレードにどう影響するか述べられる</label>
+      <label class="check-item"><input type="checkbox"> ティルトの3パターン（リベンジ・オーバートレード・分析麻痺）を識別できる</label>
+      <label class="check-item"><input type="checkbox"> 「結果の質」と「判断の質」の違いを説明できる</label>
+      <label class="check-item"><input type="checkbox"> 心理バイアスへの5つの実践的対策を述べられる</label>
+      <label class="check-item"><input type="checkbox"> ジャーナルに記録すべき心理面の3要素（感情・遵守・教訓）を説明できる</label>
+      <label class="check-item"><input type="checkbox"> 「バイアスを知っていてもバイアスは消えない」のはなぜか、そしてだから何をすべきか説明できる</label>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <p>Swing Trading Curriculum — Module 05 / 08</p>
+    <p style="margin-top:8px">原典：Kahneman & Tversky (1979) / Kahneman『Thinking, Fast and Slow』(2011) / Shefrin & Statman (1985)</p>
+    <p style="margin-top:4px">本教材は投資助言ではありません。投資判断はご自身の責任で行ってください。</p>
+    <p style="margin-top:16px"><a href="module-04-risk-management.html">← Module 04: リスク管理</a>　｜　<a href="module-06-chart-patterns.html">Module 06: チャートパターン →</a></p>
+  </div>
+</footer>
+
+</body>
+</html>
