@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Module 00 — 投資手法の全体マップ | Swing Trading Curriculum</title>
+<style>
+  :root {
+    --bg: #0a0c10; --surface: #12151e; --surface2: #1a1f2e;
+    --border: #1e293b; --text: #e2e8f0; --text2: #94a3b8; --text3: #64748b;
+    --s2: #22c55e; --s4: #ef4444; --s3: #eab308;
+    --accent: #818cf8; --cyan: #06b6d4; --white: #f8fafc;
+    --c1: #f97316; --c2: #06b6d4; --c3: #a855f7; --c4: #ec4899;
+    --c5: #14b8a6; --c6: #f59e0b; --c7: #ef4444; --c8: #64748b; --c9: #3b82f6;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { background: var(--bg); color: var(--text); font-family: "Hiragino Kaku Gothic ProN","Noto Sans JP","Yu Gothic",sans-serif; line-height: 1.8; font-size: 15px; -webkit-font-smoothing: antialiased; }
+  .container { max-width: 760px; margin: 0 auto; padding: 0 24px; }
+  .hero { padding: 80px 0 60px; border-bottom: 1px solid var(--border); background: linear-gradient(180deg, #0f1219 0%, var(--bg) 100%); }
+  .hero-module { font-size: 11px; letter-spacing: 4px; text-transform: uppercase; color: var(--accent); margin-bottom: 16px; font-weight: 600; }
+  .hero h1 { font-size: clamp(28px, 5vw, 42px); font-weight: 800; line-height: 1.3; letter-spacing: -0.5px; margin-bottom: 12px; }
+  .hero h1 em { font-style: normal; color: var(--white); }
+  .hero-sub { font-size: 16px; color: var(--text2); max-width: 560px; }
+  section { padding: 56px 0; border-bottom: 1px solid var(--border); }
+  section:last-of-type { border-bottom: none; }
+  .section-label { font-size: 11px; letter-spacing: 3px; text-transform: uppercase; color: var(--accent); margin-bottom: 20px; font-weight: 600; }
+  h2 { font-size: 22px; font-weight: 700; margin-bottom: 16px; letter-spacing: -0.3px; }
+  p { color: var(--text2); margin-bottom: 16px; }
+  p strong { color: var(--text); font-weight: 600; }
+  blockquote { border-left: 3px solid var(--accent); padding: 16px 20px; margin: 24px 0; background: var(--surface); border-radius: 0 8px 8px 0; }
+  blockquote p { font-size: 14px; color: var(--text); margin: 0; font-style: italic; }
+  blockquote cite { display: block; font-size: 12px; color: var(--text3); margin-top: 8px; font-style: normal; }
+
+  /* Strategy Cards */
+  .strat { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; margin-bottom: 16px; overflow: hidden; }
+  .strat:hover { border-color: var(--text3); }
+  .strat-header { padding: 20px 24px; cursor: pointer; display: flex; align-items: center; gap: 16px; user-select: none; }
+  .strat-header:hover { background: var(--surface2); }
+  .strat-icon { width: 44px; height: 44px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
+  .strat-header-text h3 { font-size: 16px; font-weight: 700; margin-bottom: 2px; }
+  .strat-header-text .strat-sub { font-size: 13px; color: var(--text2); }
+  .strat-toggle { margin-left: auto; font-size: 20px; color: var(--text3); transition: transform 0.3s; flex-shrink: 0; }
+  .strat.open .strat-toggle { transform: rotate(45deg); }
+  .strat-body { max-height: 0; overflow: hidden; transition: max-height 0.4s ease; }
+  .strat.open .strat-body { max-height: 5000px; }
+  .strat-content { padding: 0 24px 24px; }
+  .strat-content h4 { font-size: 12px; font-weight: 700; color: var(--text3); letter-spacing: 1.5px; text-transform: uppercase; margin: 20px 0 10px; padding-top: 16px; border-top: 1px solid var(--border); }
+  .strat-content h4:first-child { border-top: none; padding-top: 0; margin-top: 0; }
+  .strat-content ul { list-style: none; padding: 0; }
+  .strat-content li { padding: 5px 0 5px 20px; color: var(--text2); font-size: 14px; position: relative; }
+  .strat-content li::before { content: ""; position: absolute; left: 0; top: 13px; width: 6px; height: 6px; border-radius: 50%; }
+
+  /* Specs row */
+  .strat-specs { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 8px; margin: 12px 0; }
+  .strat-spec { background: var(--surface2); border-radius: 6px; padding: 8px 12px; }
+  .strat-spec-label { font-size: 10px; color: var(--text3); letter-spacing: 0.5px; text-transform: uppercase; }
+  .strat-spec-value { font-size: 13px; font-weight: 600; color: var(--text); margin-top: 2px; }
+
+  /* Edge indicator */
+  .edge-box { background: var(--surface2); border-radius: 8px; padding: 12px 16px; margin-top: 12px; font-size: 13px; }
+  .edge-box .edge-label { font-size: 10px; font-weight: 700; letter-spacing: 1px; margin-bottom: 4px; }
+  .edge-yes { border-left: 3px solid var(--s2); }
+  .edge-maybe { border-left: 3px solid var(--s3); }
+  .edge-no { border-left: 3px solid var(--text3); }
+
+  .warn-box { background: var(--surface2); border-left: 3px solid var(--s4); border-radius: 0 8px 8px 0; padding: 16px 20px; margin: 20px 0; }
+  .warn-box p { margin: 0; font-size: 14px; }
+  .insight-box { background: var(--surface2); border-left: 3px solid var(--s2); border-radius: 0 8px 8px 0; padding: 16px 20px; margin: 20px 0; }
+  .insight-box p { margin: 0; font-size: 14px; }
+
+  /* Comparison table */
+  .map-table { width: 100%; border-collapse: collapse; margin: 24px 0; font-size: 12px; }
+  .map-table th { text-align: left; padding: 8px 10px; background: var(--surface); border-bottom: 2px solid var(--border); color: var(--text); font-weight: 700; font-size: 10px; letter-spacing: 1px; text-transform: uppercase; white-space: nowrap; }
+  .map-table td { padding: 8px 10px; border-bottom: 1px solid var(--border); color: var(--text2); vertical-align: top; }
+  .map-table tr:hover td { background: var(--surface); }
+
+  .rule-list { margin: 24px 0; }
+  .rule { display: flex; gap: 16px; padding: 16px 0; border-bottom: 1px solid var(--border); align-items: flex-start; }
+  .rule:last-child { border-bottom: none; }
+  .rule-num { width: 32px; height: 32px; border-radius: 8px; background: var(--accent); color: var(--bg); display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 800; flex-shrink: 0; }
+  .rule-text { font-size: 14px; color: var(--text2); }
+  .rule-text strong { color: var(--text); }
+
+  .bridge { background: linear-gradient(135deg, var(--surface) 0%, var(--surface2) 100%); border: 1px solid var(--border); border-radius: 12px; padding: 32px; margin: 24px 0; }
+  .bridge h3 { font-size: 16px; margin-bottom: 12px; }
+  .bridge p { font-size: 14px; }
+  footer { padding: 40px 0; text-align: center; font-size: 12px; color: var(--text3); border-top: 1px solid var(--border); }
+  footer a { color: var(--accent); text-decoration: none; }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="container">
+    <div class="hero-module">Module 00 / Prerequisite</div>
+    <h1>投資手法の<em>全体マップ</em></h1>
+    <p class="hero-sub">選ぶ前に、全体像を知る。<br>9つのアプローチの構造・エッジ・弱点を俯瞰し、「どこで戦うか」を自分で決める。</p>
+  </div>
+</header>
+
+<!-- Why This Exists -->
+<section>
+  <div class="container">
+    <div class="section-label">Premise</div>
+    <h2>なぜ全体マップが必要か</h2>
+    <p>投資手法は1つではありません。それぞれのアプローチは、異なる前提・異なる市場環境で利益を生む構造を持っています。1つの手法しか知らない状態でトレードすると、その手法が機能しない環境に入ったとき、原因の切り分けができない。</p>
+    <p><strong>「知ったうえで選ぶ」のと「それしか知らない」のは違う。</strong>全体マップを持つことで、自分が選んだ手法の位置づけを理解し、トレードジャーナルの分析にも深みが出ます。うまくいかないとき、「手法自体の問題」なのか「市場環境との不一致」なのか「自分の実行の問題」なのかを区別できるようになる。</p>
+    <blockquote>
+      <p>すべての戦略を知る必要はない。しかし、自分の戦略が「何に賭けていて、何を捨てているのか」は知らなければならない。</p>
+    </blockquote>
+  </div>
+</section>
+
+<!-- Two Axes -->
+<section>
+  <div class="container">
+    <div class="section-label">Framework</div>
+    <h2>投資手法を分類する2つの軸</h2>
+    <p>すべての投資手法は、大きく<strong>2つの軸</strong>で整理できます。</p>
+    <p><strong>軸1：何に賭けるか（リターンの源泉）</strong><br>
+    モメンタム（上がっているものはさらに上がる）か、ミーンリバージョン（行き過ぎたものは戻る）か、バリュー（本来の価値より安いものは是正される）か、イベント（特定の出来事が価格を動かす）か。</p>
+    <p><strong>軸2：どう判断するか（分析の方法）</strong><br>
+    テクニカル（チャート・出来高・価格パターン）か、ファンダメンタル（業績・財務諸表・経済指標）か、クオンツ（統計モデル・アルゴリズム）か。</p>
+    <p>同じ「モメンタム」でも、テクニカルで解釈すれば移動平均線のクロス、ファンダメンタルで解釈すればEPSの加速、クオンツで解釈すれば過去6ヶ月リターンのファクタースコアになる。<strong>同じエッジを違う言語で記述しているだけ</strong>というケースも多い。</p>
+  </div>
+</section>
+
+<!-- 9 Strategies -->
+<section>
+  <div class="container">
+    <div class="section-label">The Nine Approaches</div>
+    <h2>9つのアプローチ</h2>
+    <p>各アプローチをクリックして展開してください。構造・エッジ・弱点・あなたのCPA背景との相性を評価しています。</p>
+
+    <!-- 1. Trend Following -->
+    <div class="strat open" onclick="this.classList.toggle('open')">
+      <div class="strat-header">
+        <div class="strat-icon" style="background:var(--c1);color:var(--bg)">📈</div>
+        <div class="strat-header-text">
+          <h3>① トレンドフォロー / モメンタム</h3>
+          <div class="strat-sub">上がっている株を買い、トレンドに乗る</div>
+        </div>
+        <div class="strat-toggle">+</div>
+      </div>
+      <div class="strat-body"><div class="strat-content">
+        <h4>リターンの源泉</h4>
+        <ul style="--dot-color:var(--c1)">
+          <li style="--dot:var(--c1)">株価のモメンタム（慣性）。上昇中の株はさらに上昇しやすいという統計的事実に賭ける</li>
+          <li>機関投資家の大口買いが数週間〜数ヶ月かけて株価を押し上げるプロセスに「相乗り」する構造</li>
+          <li>学術的にも「モメンタムファクター」として広く認知されている市場アノマリー</li>
+        </ul>
+        <div class="strat-specs">
+          <div class="strat-spec"><div class="strat-spec-label">時間軸</div><div class="strat-spec-value">数日〜数ヶ月</div></div>
+          <div class="strat-spec"><div class="strat-spec-label">勝率</div><div class="strat-spec-value">35〜50%</div></div>
+          <div class="strat-spec"><div class="strat-spec-label">利益構造</div><div class="strat-spec-value">損小利大（低勝率・高R倍数）</div></div>
+          <div class="strat-spec"><div class="strat-spec-label">代表的手法</div><div class="strat-spec-value">SEPA, CAN SLIM, Turtle</div></div>
+        </div>
+        <h4>強い環境 / 弱い環境</h4>
+        <ul>
+          <li>強い：明確な上昇トレンド、セクターローテーションが活発な相場</li>
+          <li>弱い：レンジ相場（横ばい）、急激なトレンド反転。モメンタムクラッシュが最大のリスク</li>
+        </ul>
+        <h4>代表人物</h4>
+        <ul><li>Weinstein, Minervini, O'Neil, Richard Dennis（タートルズ）</li></ul>
+        <div class="edge-box edge-maybe">
+          <div class="edge-label" style="color:var(--s3)">🔶 CPA背景との相性：中程度</div>
+          <p style="margin:0;color:var(--text2)">テクニカル主体のため会計知識の直接的な優位性は小さい。ただしCAN SLIMのファンダ部分（EPS分析・決算の質の評価）では活きる。Module 1〜8で体系化済み。</p>
+        </div>
+      </div></div>
+    </div>
+
+    <!-- 2. Value Investing -->
+    <div class="strat" onclick="this.classList.toggle('open')">
+      <div class="strat-header">
+        <div class="strat-icon" style="background:var(--c2);color:var(--bg)">💎</div>
+        <div class="strat-header-text">
+          <h3>② バリュー投資</h3>
+          <div class="strat-sub">本来の価値より安い株を買い、市場が気づくのを待つ</div>
+        </div>
+        <div class="strat-toggle">+</div>
+      </div>
+      <div class="strat-body"><div class="strat-content">
+        <h4>リターンの源泉</h4>
+        <ul>
+          <li>株価が「内在的価値（intrinsic value）」を下回っているときに買い、価格が価値に収束するプロセスで利益を得る</li>
+          <li>市場が短期的に過度に悲観的になる瞬間を狙う。恐怖で売られた株を拾う</li>
+          <li>「安全域（margin of safety）」——十分に安く買えば、分析が多少間違っていても損をしにくい</li>
+        </ul>
+        <div class="strat-specs">
+          <div class="strat-spec"><div class="strat-spec-label">時間軸</div><div class="strat-spec-value">数ヶ月〜数年</div></div>
+          <div class="strat-spec"><div class="strat-spec-label">勝率</div><div class="strat-spec-value">比較的高い（忍耐が前提）</div></div>
+          <div class="strat-spec"><div class="strat-spec-label">利益構造</div><div class="strat-spec-value">中勝率・中〜高R倍数</div></div>
+          <div class="strat-spec"><div class="strat-spec-label">代表的手法</div><div class="strat-spec-value">DCF, PER/PBR分析, GARP</div></div>
+        </div>
+        <h4>強い環境 / 弱い環境</h4>
+        <ul>
+          <li>強い：暴落後の回復局面、不人気セクターの見直し</li>
+          <li>弱い：バブル相場（割安株が永遠に無視される）、「バリュートラップ」（安いが構造的に衰退する企業）</li>
+        </ul>
+        <h4>代表人物</h4>
+        <ul><li>Benjamin Graham, Warren Buffett, Seth Klarman, Peter Lynch（GARP）</li></ul>
+        <div class="edge-box edge-yes">
+          <div class="edge-label" style="color:var(--s2)">🟢 CPA背景との相性：非常に高い</div>
+          <p style="margin:0;color:var(--text2)">財務諸表の読み解き、会計の質の評価（粉飾や利益操作の兆候発見）、税効果会計・退職給付会計の裏側の理解。これらはバリュー投資家にとって最も重要なスキルであり、CPAは構造的に有利。ただし時間軸が長く、週次スイングとは相性が悪い。</p>
+        </div>
+      </div></div>
+    </div>
+
+    <!-- 3. Mean Reversion -->
+    <div class="strat" onclick="this.classList.toggle('open')">
+      <div class="strat-header">
+        <div class="strat-icon" style="background:var(--c3);color:var(--bg)">🔄</div>
+        <div class="strat-header-text">
+          <h3>③ ミーンリバージョン（平均回帰）</h3>
+          <div class="strat-sub">行き過ぎた動きは元に戻るという統計に賭ける</div>
+        </div>
+        <div class="strat-toggle">+</div>
+      </div>
+      <div class="strat-body"><div class="strat-content">
+        <h4>リターンの源泉</h4>
+        <ul>
+          <li>株価が短期的に平均から大きく乖離した後、平均に回帰する傾向を利用する</li>
+          <li>RSIが30以下（売られすぎ）で買い、70以上（買われすぎ）で売る、といった逆張り戦略</li>
+          <li>ボリンジャーバンドの−2σで買い、+2σで売るなどの統計的アプローチ</li>
+        </ul>
+        <div class="strat-specs">
+          <div class="strat-spec"><div class="strat-spec-label">時間軸</div><div class="strat-spec-value">数日〜数週間</div></div>
+          <div class="strat-spec"><div class="strat-spec-label">勝率</div><div class="strat-spec-value">比較的高い（60〜70%）</div></div>
+          <div class="strat-spec"><div class="strat-spec-label">利益構造</div><div class="strat-spec-value">高勝率・低R倍数（小さく多く勝つ）</div></div>
+          <div class="strat-spec"><div class="strat-spec-label">代表的手法</div><div class="strat-spec-value">RSI逆張り, ボリンジャー, ペアトレード</div></div>
+        </div>
+        <h4>強い環境 / 弱い環境</h4>
+        <ul>
+          <li>強い：レンジ相場、ボラティリティが安定している環境</li>
+          <li>弱い：強いトレンド相場。売られすぎの株がさらに売られ続ける「落ちるナイフ」リスク</li>
+        </ul>
+        <div class="edge-box edge-no">
+          <div class="edge-label" style="color:var(--text3)">⚪ CPA背景との相性：低い</div>
+          <p style="margin:0;color:var(--text2)">純粋に統計・テクニカル的なアプローチであり、会計知識の優位性はほぼ活かせない。ただしモメンタム戦略との組み合わせ（モメンタムが機能しないレンジ相場で切り替える）として知っておく価値はある。</p>
+        </div>
+      </div></div>
+    </div>
+
+    <!-- 4. Event-Driven -->
+    <div class="strat" onclick="this.classList.toggle('open')">
+      <div class="strat-header">
+        <div class="strat-icon" style="background:var(--c4);color:var(--bg)">⚡</div>
+        <div class="strat-header-text">
+          <h3>④ イベントドリブン</h3>
+          <div class="strat-sub">決算・M&A・税制改正など特定のカタリストに賭ける</div>
+        </div>
+        <div class="strat-toggle">+</div>
+      </div>
+      <div class="strat-body"><div class="strat-content">
+        <h4>リターンの源泉</h4>
+        <ul>
+          <li>特定のイベント（決算発表、業績修正、M&A、スピンオフ、規制変更）が株価を動かすプロセスに賭ける</li>
+          <li>「イベント前にポジションを取り、イベント後の値動きで利確する」または「イベント直後の過剰反応の修正を狙う」</li>
+          <li>決算サプライズ後の株価ドリフト（Post-Earnings Announcement Drift）は学術的にも認知されたアノマリー</li>
+        </ul>
+        <div class="strat-specs">
+          <div class="strat-spec"><div class="strat-spec-label">時間軸</div><div class="strat-spec-value">数日〜数週間</div></div>
+          <div class="strat-spec"><div class="strat-spec-label">勝率</div><div class="strat-spec-value">イベントの質に依存</div></div>
+          <div class="strat-spec"><div class="strat-spec-label">利益構造</div><div class="strat-spec-value">イベントごとに非対称リスク設計</div></div>
+          <div class="strat-spec"><div class="strat-spec-label">代表的手法</div><div class="strat-spec-value">決算プレイ, スピンオフ, 特殊状況</div></div>
+        </div>
+        <h4>強い環境 / 弱い環境</h4>
+        <ul>
+          <li>強い：あらゆる市場環境で機会がある（イベントはトレンドに関係なく発生する）</li>
+          <li>弱い：イベントが「織り込み済み」の場合、動かない。決算ギャンブルは損切りが効かないリスク（GD）</li>
+        </ul>
+        <div class="edge-box edge-yes">
+          <div class="edge-label" style="color:var(--s2)">🟢 CPA背景との相性：極めて高い</div>
+          <p style="margin:0;color:var(--text2)">決算短信を他の参加者より正確に速く読める、業績修正の可能性を進捗率から予測できる、税制改正のインパクトを構造的に理解できる。この3つはCPAだけが持つ圧倒的なエッジ。さらに時間軸も週次と合致。最も探求する価値のある領域。</p>
+        </div>
+      </div></div>
+    </div>
+
+    <!-- 5. Quantitative -->
+    <div class="strat" onclick="this.classList.toggle('open')">
+      <div class="strat-header">
+        <div class="strat-icon" style="background:var(--c5);color:var(--bg)">🔢</div>
+        <div class="strat-header-text">
+          <h3>⑤ クオンツ / 統計的手法</h3>
+          <div class="strat-sub">データとアルゴリズムで再現可能なパターンを見つける</div>
+        </div>
+        <div class="strat-toggle">+</div>
+      </div>
+      <div class="strat-body"><div class="strat-content">
+        <h4>リターンの源泉</h4>
+        <ul>
+          <li>過去のデータからバックテストで検証された統計的パターンに賭ける</li>
+          <li>ファクター投資（モメンタム・バリュー・クオリティ・低ボラティリティなどの「ファクター」で銘柄を選ぶ）</li>
+          <li>人間の判断バイアスを排除し、ルールベースで完全に機械的に売買する</li>
+        </ul>
+        <div class="strat-specs">
+          <div class="strat-spec"><div class="strat-spec-label">時間軸</div><div class="strat-spec-value">様々（秒〜月）</div></div>
+          <div class="strat-spec"><div class="strat-spec-label">勝率</div><div class="strat-spec-value">戦略に依存</div></div>
+          <div class="strat-spec"><div class="strat-spec-label">利益構造</div><div class="strat-spec-value">統計的エッジの積み重ね</div></div>
+          <div class="strat-spec"><div class="strat-spec-label">代表的手法</div><div class="strat-spec-value">ファクター投資, 統計的裁定</div></div>
+        </div>
+        <h4>強い環境 / 弱い環境</h4>
+        <ul>
+          <li>強い：十分な流動性とデータがある市場。パターンが安定している期間</li>
+          <li>弱い：レジーム変化（市場の構造が変わるとき）。過学習（overfitting）で見かけのパターンに騙される</li>
+        </ul>
+        <div class="edge-box edge-maybe">
+          <div class="edge-label" style="color:var(--s3)">🔶 CPA背景との相性：中程度</div>
+          <p style="margin:0;color:var(--text2)">Python/GASのスキルがあるので技術的には可能。ただし63万円の資本規模ではクオンツのメリット（分散・頻度）が活きにくい。将来的に資本が拡大した段階で検討する価値あり。</p>
+        </div>
+      </div></div>
+    </div>
+
+    <!-- 6. Wyckoff / Market Structure -->
+    <div class="strat" onclick="this.classList.toggle('open')">
+      <div class="strat-header">
+        <div class="strat-icon" style="background:var(--c6);color:var(--bg)">🏗</div>
+        <div class="strat-header-text">
+          <h3>⑥ Wyckoff / マーケット構造分析</h3>
+          <div class="strat-sub">機関投資家の「足跡」をチャートから読む</div>
+        </div>
+        <div class="strat-toggle">+</div>
+      </div>
+      <div class="strat-body"><div class="strat-content">
+        <h4>リターンの源泉</h4>
+        <ul>
+          <li>機関投資家（"コンポジットマン"）がどこで買い集め（accumulation）、どこで売り抜け（distribution）しているかをチャートから識別する</li>
+          <li>Weinsteinの4ステージとルーツを共有。Stage 1のaccumulationフェーズをより精密に分析する手法</li>
+          <li>出来高と価格の関係（effort vs result）で需給バランスを判断する</li>
+        </ul>
+        <div class="strat-specs">
+          <div class="strat-spec"><div class="strat-spec-label">時間軸</div><div class="strat-spec-value">数日〜数ヶ月</div></div>
+          <div class="strat-spec"><div class="strat-spec-label">習得難度</div><div class="strat-spec-value">高い（主観的判断が多い）</div></div>
+          <div class="strat-spec"><div class="strat-spec-label">代表的手法</div><div class="strat-spec-value">Wyckoff法, VSA</div></div>
+        </div>
+        <h4>強い環境 / 弱い環境</h4>
+        <ul>
+          <li>強い：出来高が透明に可視化される市場。流動性のある銘柄</li>
+          <li>弱い：ダークプール取引が多い環境。小型株で出来高データが不十分な場合</li>
+        </ul>
+        <div class="edge-box edge-no">
+          <div class="edge-label" style="color:var(--text3)">⚪ CPA背景との相性：低い</div>
+          <p style="margin:0;color:var(--text2)">純粋にチャートリーディングの技術。会計知識との接点は少ない。ただしStage Analysisとの連続性があり、Module 1の理解を深める補助教材としては有用。</p>
+        </div>
+      </div></div>
+    </div>
+
+    <!-- 7. Ichimoku -->
+    <div class="strat" onclick="this.classList.toggle('open')">
+      <div class="strat-header">
+        <div class="strat-icon" style="background:var(--c7);color:var(--bg)">☁</div>
+        <div class="strat-header-text">
+          <h3>⑦ 一目均衡表</h3>
+          <div class="strat-sub">日本発の総合テクニカルシステム</div>
+        </div>
+        <div class="strat-toggle">+</div>
+      </div>
+      <div class="strat-body"><div class="strat-content">
+        <h4>リターンの源泉</h4>
+        <ul>
+          <li>転換線・基準線・先行スパン（雲）・遅行スパンの5要素で、トレンド方向・強さ・サポート/レジスタンスを1つの画面で判断</li>
+          <li>「時間論」「波動論」「値幅観測論」の3つの理論体系を持つ、非常に奥が深いシステム</li>
+          <li>日本の個人投資家に広く使われているため、多くの参加者が同じ水準を意識している＝自己実現的に機能しやすい</li>
+        </ul>
+        <div class="strat-specs">
+          <div class="strat-spec"><div class="strat-spec-label">時間軸</div><div class="strat-spec-value">数日〜数ヶ月</div></div>
+          <div class="strat-spec"><div class="strat-spec-label">習得難度</div><div class="strat-spec-value">高い（奥が極めて深い）</div></div>
+          <div class="strat-spec"><div class="strat-spec-label">日本市場との親和性</div><div class="strat-spec-value">非常に高い</div></div>
+        </div>
+        <h4>強い環境 / 弱い環境</h4>
+        <ul>
+          <li>強い：トレンドが明確な相場。日本株では特に機能しやすい</li>
+          <li>弱い：レンジ相場（雲の中で株価がもみ合うと判断不能になる）</li>
+        </ul>
+        <div class="edge-box edge-no">
+          <div class="edge-label" style="color:var(--text3)">⚪ CPA背景との相性：低い</div>
+          <p style="margin:0;color:var(--text2)">純粋なテクニカルシステム。ただし日本市場で戦うなら「多くの参加者が見ている指標」として知っておく価値はある。雲がサポートやレジスタンスとして機能する場面は実際に多い。</p>
+        </div>
+      </div></div>
+    </div>
+
+    <!-- 8. Income / Dividend -->
+    <div class="strat" onclick="this.classList.toggle('open')">
+      <div class="strat-header">
+        <div class="strat-icon" style="background:var(--c8);color:var(--text)">💰</div>
+        <div class="strat-header-text">
+          <h3>⑧ インカム / 配当戦略</h3>
+          <div class="strat-sub">配当収入で安定的なリターンを積み上げる</div>
+        </div>
+        <div class="strat-toggle">+</div>
+      </div>
+      <div class="strat-body"><div class="strat-content">
+        <h4>リターンの源泉</h4>
+        <ul>
+          <li>高配当利回りの銘柄を保有し、定期的な配当収入を得る</li>
+          <li>配当の再投資による複利効果で長期的に資産を成長させる</li>
+          <li>株価の上下よりもキャッシュフローの安定性を重視</li>
+        </ul>
+        <div class="strat-specs">
+          <div class="strat-spec"><div class="strat-spec-label">時間軸</div><div class="strat-spec-value">数年〜永久</div></div>
+          <div class="strat-spec"><div class="strat-spec-label">利益構造</div><div class="strat-spec-value">低リスク・低リターン（安定的）</div></div>
+        </div>
+        <h4>週次スイングとの関係</h4>
+        <ul>
+          <li>スイングトレードとは対極の手法。63万円で短期の能力構築を目指す今のフェーズでは適用外</li>
+          <li>ただし、将来的にトレード資金とは別に「守りの資金」をどこに置くかの選択肢として知っておく価値はある</li>
+        </ul>
+        <div class="edge-box edge-maybe">
+          <div class="edge-label" style="color:var(--s3)">🔶 CPA背景との相性：中程度</div>
+          <p style="margin:0;color:var(--text2)">配当の持続可能性を財務分析で判断する能力はCPAの強み。ただし今のフェーズでは使わない。</p>
+        </div>
+      </div></div>
+    </div>
+
+    <!-- 9. Macro -->
+    <div class="strat" onclick="this.classList.toggle('open')">
+      <div class="strat-header">
+        <div class="strat-icon" style="background:var(--c9);color:var(--bg)">🌍</div>
+        <div class="strat-header-text">
+          <h3>⑨ マクロ / グローバル</h3>
+          <div class="strat-sub">経済サイクル・金利・地政学でポジションを取る</div>
+        </div>
+        <div class="strat-toggle">+</div>
+      </div>
+      <div class="strat-body"><div class="strat-content">
+        <h4>リターンの源泉</h4>
+        <ul>
+          <li>景気サイクル、金利動向、為替変動、地政学的リスクなど、マクロ経済の大きな変動に賭ける</li>
+          <li>「この政策が実施されれば、このセクターが恩恵を受ける」という因果推論</li>
+          <li>個別株ではなく、ETF・先物・通貨・債券も含む広い視野</li>
+        </ul>
+        <div class="strat-specs">
+          <div class="strat-spec"><div class="strat-spec-label">時間軸</div><div class="strat-spec-value">数ヶ月〜数年</div></div>
+          <div class="strat-spec"><div class="strat-spec-label">必要知識</div><div class="strat-spec-value">経済学、中央銀行政策、地政学</div></div>
+        </div>
+        <h4>強い環境 / 弱い環境</h4>
+        <ul>
+          <li>強い：大きな経済転換点（利上げサイクル開始、景気後退入り等）</li>
+          <li>弱い：マクロテーゼが正しくても、タイミングが早すぎると損切りに追い込まれる</li>
+        </ul>
+        <div class="edge-box edge-maybe">
+          <div class="edge-label" style="color:var(--s3)">🔶 CPA背景との相性：中程度</div>
+          <p style="margin:0;color:var(--text2)">税制改正の波及分析はマクロ→セクターの因果推論に近い。Module 7のセクターローテーションと接続する部分がある。ただし63万円で個別株スイングを行う今のフェーズでは、マクロは「市場全体の方向性判定（M条件）」に使う程度。</p>
+        </div>
+      </div></div>
+    </div>
+  </div>
+</section>
+
+<!-- Comparison Table -->
+<section>
+  <div class="container">
+    <div class="section-label">Comparison</div>
+    <h2>一覧比較</h2>
+    <div style="overflow-x:auto;">
+    <table class="map-table">
+      <thead><tr><th>手法</th><th>エッジの源泉</th><th>時間軸</th><th>勝率</th><th>CPA相性</th></tr></thead>
+      <tbody>
+        <tr><td>①トレンドフォロー</td><td>モメンタム（慣性）</td><td>日〜月</td><td>35-50%</td><td>🔶</td></tr>
+        <tr><td>②バリュー投資</td><td>価格と価値の乖離</td><td>月〜年</td><td>中〜高</td><td>🟢</td></tr>
+        <tr><td>③ミーンリバージョン</td><td>統計的回帰</td><td>日〜週</td><td>60-70%</td><td>⚪</td></tr>
+        <tr><td>④イベントドリブン</td><td>カタリストの先読み</td><td>日〜週</td><td>可変</td><td>🟢🟢</td></tr>
+        <tr><td>⑤クオンツ</td><td>データ・アルゴリズム</td><td>可変</td><td>可変</td><td>🔶</td></tr>
+        <tr><td>⑥Wyckoff</td><td>需給構造の読解</td><td>日〜月</td><td>可変</td><td>⚪</td></tr>
+        <tr><td>⑦一目均衡表</td><td>日本市場の自己実現性</td><td>日〜月</td><td>可変</td><td>⚪</td></tr>
+        <tr><td>⑧配当戦略</td><td>キャッシュフローの安定</td><td>年〜永久</td><td>高</td><td>🔶</td></tr>
+        <tr><td>⑨マクロ</td><td>経済サイクルの予測</td><td>月〜年</td><td>可変</td><td>🔶</td></tr>
+      </tbody>
+    </table>
+    </div>
+  </div>
+</section>
+
+<!-- Key Insight -->
+<section>
+  <div class="container">
+    <div class="section-label">Key Insight</div>
+    <h2>この地図から見えること</h2>
+    <p>CPA背景との相性で突出しているのは<strong>④イベントドリブン</strong>と<strong>②バリュー投資</strong>です。どちらも財務諸表の深い読解が直接的なエッジになる。</p>
+    <p>ただしバリュー投資は時間軸が長く、週次スイングとは合わない。イベントドリブンは時間軸も合致し、決算サプライズ・業績修正・税制改正という「CPAが最も得意なイベント」で戦える構造。</p>
+    <p>一方、①トレンドフォロー（Module 1〜8）はCPA背景のエッジは中程度だが、ルールが明確で学習しやすく、63万円の「授業料」で体系的にスキルを身につけるには最適。</p>
+
+    <div class="insight-box">
+      <p><strong>💡 最も有力な組み合わせ：</strong>①トレンドフォローを基盤として習得しつつ（Module 1〜8）、④イベントドリブンの要素を重ねる。具体的には、トレンドテンプレートを通過した銘柄の中から、決算サプライズや業績修正が期待できる銘柄を優先的に選ぶ。スクリーニングはトレンドフォロー、銘柄の最終選定はCPAの決算分析眼。2つのエッジを重ねることで、単独の手法より高い期待値を狙える可能性がある。</p>
+    </div>
+
+    <p>ただし、これは現時点での仮説にすぎません。実際にトレードデータが溜まった段階で、どのアプローチが自分に合っているかを検証すべきです。全体マップを持っていれば、「この負けはモメンタムが機能しない環境だったのか」「イベントドリブン的に拾った銘柄のほうが成績がいいのか」といった分析ができる。それがこのModule 0の存在意義です。</p>
+  </div>
+</section>
+
+<!-- How to Use This Map -->
+<section>
+  <div class="container">
+    <div class="section-label">Navigation</div>
+    <h2>この全体マップの使い方</h2>
+    <div class="rule-list">
+      <div class="rule"><div class="rule-num">1</div><div class="rule-text"><strong>まずModule 1〜8を一通り理解する。</strong>トレンドフォローは最も体系化されていて、学習の骨格として優れている。</div></div>
+      <div class="rule"><div class="rule-num">2</div><div class="rule-text"><strong>実戦に入ったら、ジャーナルに「この手法のどの要素が機能したか」を記録する。</strong>トレンドテンプレートの通過が効いたのか、決算分析が効いたのか。</div></div>
+      <div class="rule"><div class="rule-num">3</div><div class="rule-text"><strong>20〜30トレード後に、自分のエッジがどこにあるかを分析する。</strong>ファンダ分析で選んだ銘柄の成績が良ければ、イベントドリブンの比重を上げる。テクニカルだけで十分なら、そのまま継続。</div></div>
+      <div class="rule"><div class="rule-num">4</div><div class="rule-text"><strong>市場環境が変わったとき、この地図に戻る。</strong>トレンドフォローが機能しない時期に、ミーンリバージョンやイベントドリブンに切り替える判断材料として使う。</div></div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <p>Swing Trading Curriculum — Module 00: 投資手法の全体マップ</p>
+    <p style="margin-top:4px">本教材は投資助言ではありません。投資判断はご自身の責任で行ってください。</p>
+    <p style="margin-top:16px"><a href="module-01-stage-analysis.html">Module 01: Stage Analysis →</a></p>
+  </div>
+</footer>
+
+</body>
+</html>
