@@ -1,8 +1,19 @@
-# 予想家印方式リサーチツール — Claude Code ワークフロー
+# 予想家印方式リサーチツール
 
 ## 概要
 
-TradingViewスクリーナーの結果を `watchlist.csv` に記入し、セッション内で銘柄評価を実行する。APIキー不要。
+TradingViewスクリーナーの結果を `watchlist.csv` に記入し、yfinance API で株価データを取得、7人の予想家がプログラムで自動評価する。Anthropic APIキー不要。
+
+## 実行方法
+
+```bash
+# watchlist.csv から全銘柄を評価
+pip install -r requirements.txt
+python -m tools.research --csv watchlist.csv
+
+# 個別銘柄を評価
+python -m tools.research 6758,ソニーグループ 7203,トヨタ自動車
+```
 
 ## ルーチン実行手順
 

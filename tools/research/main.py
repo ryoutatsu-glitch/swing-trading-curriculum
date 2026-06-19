@@ -6,7 +6,7 @@ from datetime import datetime, timezone, timedelta
 from .aggregator import aggregate_evaluations
 from .html_reporter import save_html_report
 from .reporter import generate_markdown_report, save_report
-from .tipsters import TIPSTERS
+from .tipsters import TIPSTERS, StockData
 
 JST = timezone(timedelta(hours=9))
 
@@ -42,15 +42,30 @@ def parse_input(args: list[str]) -> list[tuple[str, str]]:
 
 
 def evaluate_stock(ticker: str, company_name: str) -> dict:
-    evaluations = []
+    print(f"  📡 {ticker}.T のデータを取得中...")
+    data = StockData(ticker, company_name)
 
+    if data.hist.empty:
+        print(f"  ❌ データ取得失敗")
+        return {
+            "ticker": ticker,
+            "company_name": company_name or ticker,
+            "mark": "△",
+            "recommendation_count": 0,
+            "total_confidence": 0,
+            "evaluations": [],
+        }
+
+    print(f"  ✅ {len(data.hist)}日分のデータ取得完了（終値: {data.price:,.0f}円）")
+
+    evaluations = []
     for tipster_id, tipster_cls in TIPSTERS.items():
         tipster = tipster_cls()
         label = f"{tipster.tipster_id} {tipster.tipster_name}"
         print(f"  📊 予想家{label} が評価中...")
 
         try:
-            result = tipster.evaluate(ticker, company_name)
+            result = tipster.evaluate(data)
             evaluations.append(result)
 
             icon = "✅" if result["recommendation"] else "❌"
@@ -110,8 +125,6 @@ def run(stocks: list[tuple[str, str]]) -> dict:
     print(f"   JSON: {json_path}")
     print(f"   Markdown: {md_path}")
     print(f"   HTML: {html_path}")
-    print(f"\n🌐 HTMLレポートをブラウザで開くには:")
-    print(f"   start {html_path}")
 
     return report_data
 
@@ -149,8 +162,8 @@ def main():
     else:
         parser.print_help()
         print("\n使用例:")
-        print("  python -m tools.research.main 6758,ソニーグループ 7203,トヨタ自動車")
-        print("  python -m tools.research.main --csv stocks.csv")
+        print("  python -m tools.research 6758,ソニーグループ 7203,トヨタ自動車")
+        print("  python -m tools.research --csv watchlist.csv")
         sys.exit(0)
 
     stocks = parse_input(stock_args)

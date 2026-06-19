@@ -1,5 +1,3 @@
-MODEL = "claude-opus-4-8"
-MAX_TOKENS = 4096
 MAX_STOCKS_PER_RUN = 10
 
 MARK_THRESHOLDS = {
