@@ -7,6 +7,7 @@
 ## 完成済み
 
 ### カリキュラム（Module 0〜8）
+全モジュールがHTML教材としてGitHub Pagesにデプロイ済み。
 - Module 0: 投資手法の全体マップ（9つのアプローチ俯瞰）
 - Module 1: Stage Analysis (Weinstein)
 - Module 2: SEPA / Trend Template / VCP (Minervini)
@@ -50,7 +51,7 @@ GitHub Pages: https://ryoutatsu-glitch.github.io/swing-trading-curriculum/module
 - ▲（単穴）: 3人が推奨
 - △（連下）: 2人以下
 
-#### ゴチ方式（予想家の淘汰）
+#### ゴチになります方式（予想家の淘汰）
 - 各予想家の成績（推奨銘柄の勝率・R倍数）を個別追跡
 - 一定期間（例：20トレード）後に成績の悪い予想家は退場
 - 新しい手法を学んだら新予想家として参戦可能
@@ -81,6 +82,21 @@ GitHub Pages: https://ryoutatsu-glitch.github.io/swing-trading-curriculum/module
 - React + persistent storage（Claude artifactのstorage API）またはローカルアプリ
 - データはセッション間で永続化
 
+## Skills活用方針
+
+Claude Code開発時、以下のカスタムskillを作成・活用すること。
+
+### 作成すべきSkill
+
+1. **予想家スキル（7つ）**: 各予想家の評価ロジックを個別のskillとして定義。プロンプト・評価基準・出力フォーマットをskill化することで、予想家の追加・削除・修正が容易になる。
+2. **決算分析スキル**: 日本企業の決算短信を読み解き、CAN SLIM基準での評価を行うskill。EPSの代わりに営業利益を使う日本株固有の読み替えロジックを含む。
+3. **トレードジャーナル管理スキル**: ジャーナルへの記録・分析・週次レビュー生成を行うskill。
+4. **銘柄リサーチスキル**: TradingViewスクリーナーの出力を受け取り、株探・TDnet・EDINET等から情報を収集して構造化するskill。
+
+### 既存Skillの活用
+- リポジトリ内の `/mnt/skills/` にある既存スキル（frontend-design, xlsx, pdf等）も必要に応じて活用する。
+- 特にデータ分析系のスキルはジャーナル分析機能の構築に使える可能性がある。
+
 ## ユーザーコンテキスト
 
 - 公認会計士・税理士（マネックス合同会計、京都）
@@ -96,13 +112,16 @@ GitHub Pages: https://ryoutatsu-glitch.github.io/swing-trading-curriculum/module
 
 1. **素人の自作ほど怖いものはない** → データ取得・スクリーニングは既存プロツール（TradingView, 株探）に任せる。自作するのはリサーチ層とジャーナル層のみ
 2. **知ったうえで選ぶ** → Module 0で9つのアプローチを俯瞰してから手法を選定。ゴチ方式で実績データに基づいて手法を淘汰
-3. **AIが広さと深さを担保、人間が判断の質を担保** → 嗅覚（正風会プレゼンのコンセプト）
-4. **市場とのギャップがエッジ** → 汎用テクニカルではなく、CPA固有の読解力が差別化要因
+3. **広く深くがAI時代の強み** → 従来の「広く浅く or 狭く深く」のトレードオフをAIで解消。スクリーナーの出力（広さ）に対してAIが深掘りリサーチをかける（深さ）
+4. **AIが広さと深さを担保、人間が判断の質を担保** → 嗅覚（正風会プレゼンのコンセプト）
+5. **市場とのギャップがエッジ** → 汎用テクニカルではなく、CPA固有の読解力が差別化要因
+6. **決算短信は遅行指標** → 決算発表前の先行リサーチ（IR、製品発表、業界動向、採用動向）のほうが重要。AIによる情報モザイクの構築がここを担う
 
 ## リポジトリ構成
 ```
 swing-trading-curriculum/
 ├── README.md
+├── HANDOFF.md （このファイル）
 ├── modules/
 │   ├── module-00-strategy-map.html
 │   ├── module-01-stage-analysis.html
@@ -113,5 +132,7 @@ swing-trading-curriculum/
 │   ├── module-06-chart-patterns.html
 │   ├── module-07-sector-rotation.html
 │   └── module-08-japan-specific.html
-└── HANDOFF.md （このファイル）
+└── (以降Claude Codeで追加)
+    ├── tools/          # 予想家印ツール、ジャーナル
+    └── skills/         # カスタムスキル定義
 ```
