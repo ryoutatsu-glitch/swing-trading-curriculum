@@ -6,6 +6,7 @@
 
 | # | Module | Status |
 |---|--------|--------|
+| 00 | [投資手法の全体マップ](modules/module-00-strategy-map.html) | ✅ |
 | 01 | [Stage Analysis (Stan Weinstein)](modules/module-01-stage-analysis.html) | ✅ |
 | 02 | [SEPA / Trend Template / VCP (Mark Minervini)](modules/module-02-sepa-vcp.html) | ✅ |
 | 03 | [CAN SLIM 概論 (William O'Neil)](modules/module-03-canslim.html) | ✅ |
@@ -18,21 +19,14 @@
 ## 設計思想
 
 - **巨人の肩に乗る**: 実績のある手法（Weinstein, Minervini, O'Neil）を土台にする
-- **エッジの習得**: 汎用的なテクニカル分析スキルを実弾投入で体に叩き込む
+- **全体像を知ったうえで選ぶ**: Module 0で9つのアプローチを俯瞰し、自分のエッジがある領域を見極める
 - **損小利大**: リスク管理を手法と同格で学ぶ
 
 ## 使い方
 
-各モジュールは単体のHTMLファイルです。ブラウザで開いてそのまま学習できます。
+Module 0（全体マップ）から始め、各モジュールは単体のHTMLファイルとしてブラウザで開けます。
 
 GitHub Pages: https://ryoutatsu-glitch.github.io/swing-trading-curriculum/modules/
-
-## Next Steps
-
-1. トレードジャーナルを構築する
-2. 楽天証券の初期設定を完了する
-3. 63万円で最初のトレードを実行する
-4. 最初の20トレードの目標：ルール遵守率80%以上
 
 ## ⚠ Disclaimer
 
