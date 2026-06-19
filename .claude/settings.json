@@ -1,0 +1,15 @@
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "if [ -f watchlist.csv ]; then echo '{\"systemMessage\":\"📊 予想家印方式リサーチツール: watchlist.csv を検出しました。\\\"リサーチ実行\\\" と入力すると銘柄評価を開始します。\",\"hookSpecificOutput\":{\"hookEventName\":\"SessionStart\",\"additionalContext\":\"watchlist.csv が存在します。ユーザーが \\\"リサーチ実行\\\" \\\"銘柄を評価して\\\" \\\"evaluate\\\" などと言ったら、CLAUDE.md のワークフローに従って予想家印方式リサーチを実行してください。\"}}'; fi",
+            "timeout": 10
+          }
+        ]
+      }
+    ]
+  }
+}
